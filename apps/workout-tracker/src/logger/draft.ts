@@ -1,0 +1,78 @@
+/**
+ * A draft is the set the stepper fields show before it is logged. It keeps
+ * every field, so switching kind and back does not lose the numbers.
+ */
+import { catalogEntryOf } from "workout/catalog";
+import { joinMinutes, splitMinutes, type ExerciseSet, type SetKind } from "workout/exercise-set";
+
+export type Draft = {
+  kind: SetKind;
+  reps: number | null;
+  kilograms: number | null;
+  minutes: number | null;
+  seconds: number | null;
+};
+
+export type DraftField = Exclude<keyof Draft, "kind">;
+
+const DEFAULT_DRAFT: Draft = { kind: "weight", reps: 8, kilograms: 20, minutes: 1, seconds: 0 };
+const REP_STEP = 1;
+const KILOGRAM_STEP = 2.5;
+const MINUTE_STEP = 1;
+const SECOND_STEP = 5;
+
+export const KIND_OPTIONS = [
+  { kind: "weight", label: "Weight" },
+  { kind: "body", label: "Body weight" },
+  { kind: "time", label: "Time" },
+] as const satisfies readonly { kind: SetKind; label: string }[];
+
+export const KIND_FIELDS: Record<SetKind, readonly { label: string; field: DraftField; step: number }[]> = {
+  weight: [
+    { label: "Reps", field: "reps", step: REP_STEP },
+    { label: "Weight (kg)", field: "kilograms", step: KILOGRAM_STEP },
+  ],
+  body: [{ label: "Reps", field: "reps", step: REP_STEP }],
+  time: [
+    { label: "Min", field: "minutes", step: MINUTE_STEP },
+    { label: "Sec", field: "seconds", step: SECOND_STEP },
+  ],
+};
+
+const draftFieldsOf = (set: ExerciseSet): Partial<Draft> => {
+  switch (set.kind) {
+    case "weight":
+      return { kind: set.kind, reps: set.reps, kilograms: set.kilograms };
+    case "body":
+      return { kind: set.kind, reps: set.reps };
+    case "time":
+      return { kind: set.kind, ...splitMinutes(set.seconds) };
+  }
+};
+
+/** Seed order: last set today, first set last time, catalog kind, defaults. */
+export const seedDraft = (exerciseName: string, lastSetToday?: ExerciseSet, firstSetLastTime?: ExerciseSet): Draft => {
+  const seed = lastSetToday ?? firstSetLastTime;
+  const kind = catalogEntryOf(exerciseName)?.kind;
+  return { ...DEFAULT_DRAFT, ...(kind && { kind }), ...(seed && draftFieldsOf(seed)) };
+};
+
+export const withField = (draft: Draft, field: DraftField, value: number | null): Draft => {
+  const next = { ...draft };
+  next[field] = value;
+  return next;
+};
+
+export const setFromDraft = (draft: Draft): ExerciseSet | undefined => {
+  const reps = Math.round(draft.reps ?? 0);
+  switch (draft.kind) {
+    case "weight":
+      return reps > 0 && draft.kilograms !== null ? { kind: "weight", reps, kilograms: draft.kilograms } : undefined;
+    case "body":
+      return reps > 0 ? { kind: "body", reps } : undefined;
+    case "time": {
+      const seconds = joinMinutes(Math.round(draft.minutes ?? 0), Math.round(draft.seconds ?? 0));
+      return seconds > 0 ? { kind: "time", seconds } : undefined;
+    }
+  }
+};

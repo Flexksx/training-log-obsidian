@@ -1,0 +1,39 @@
+import { BUILT_IN_CATALOG } from "./built-in-catalog.ts";
+import type { SetKind } from "./exercise-set.ts";
+
+export const MUSCLE_GROUPS = [
+  "Chest",
+  "Back",
+  "Shoulders",
+  "Legs",
+  "Arms",
+  "Core",
+  "Full body",
+  "Cardio",
+  "Mobility",
+  "Other",
+] as const;
+
+export type MuscleGroup = (typeof MUSCLE_GROUPS)[number];
+export type CatalogEntry = { name: string; group: MuscleGroup; kind?: SetKind };
+
+/** Two names with the same key are the same exercise: "Push-up" and "pushup". */
+export const exerciseKey = (name: string): string => name.toLowerCase().replace(/[^a-z0-9]/g, "");
+
+const CATALOG_BY_KEY = new Map(BUILT_IN_CATALOG.map(entry => [exerciseKey(entry.name), entry]));
+
+/** Rule order matters: "Triceps Pulldown" must hit Arms before "pulldown" hits Back. */
+const GROUP_RULES: readonly (readonly [MuscleGroup, RegExp])[] = [
+  ["Mobility", /\b(stretch(es|ing)?|mobility|foam roll(ing)?|yoga)\b/i],
+  ["Core", /\b(abs?|abdominal|crunch|plank|knee raise|leg raise|hanging)\b/i],
+  ["Arms", /\b(curls?|biceps?|triceps?|skull)\b/i],
+  ["Shoulders", /\b(delts?|shoulder|overhead|lateral raise|shrug)\b/i],
+  ["Chest", /\b(bench|chest|fly|pec|push-?ups?|dips?)\b/i],
+  ["Back", /\b(rows?|pulldown|pull-?ups?|chin-?ups?|lat|deadlift)\b/i],
+  ["Legs", /\b(squats?|leg|lunges?|calf|glute|hip|step-?up)\b/i],
+];
+
+export const catalogEntryOf = (name: string): CatalogEntry | undefined => CATALOG_BY_KEY.get(exerciseKey(name));
+
+export const muscleGroupOf = (name: string): MuscleGroup =>
+  catalogEntryOf(name)?.group ?? GROUP_RULES.find(([, pattern]) => pattern.test(name))?.[0] ?? "Other";

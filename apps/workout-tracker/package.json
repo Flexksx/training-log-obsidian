@@ -1,0 +1,22 @@
+{
+  "name": "workout-tracker",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "dev": "node esbuild.config.mjs --watch",
+    "lint": "svelte-check --fail-on-warnings"
+  },
+  "dependencies": {
+    "activity": "workspace:*",
+    "svelte": "^5.57.2",
+    "workout": "workspace:*"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "esbuild-svelte": "^0.9.5",
+    "obsidian": "^1.14.4",
+    "svelte-check": "^4.7.7",
+    "typescript": "^6.0.3"
+  }
+}
