@@ -67,10 +67,11 @@ just publish
 
 Then reload the plugin in Obsidian.
 
-To release, set `version` in the root `manifest.json`, commit, then push a tag
-with the same version and no `v` prefix, for example `0.1.0`.
-`.github/workflows/release.yml` lints, tests and builds the plugin, then
-publishes a GitHub release with the three files. The Obsidian community
+To release, set `version` in the root `manifest.json` and merge to `main`.
+`.github/workflows/release.yml` runs on every push to `main`. If a release for
+that version already exists, it stops. Otherwise it lints, tests and builds the
+plugin, tags the commit with the version (no `v` prefix, for example `0.1.0`)
+and publishes a GitHub release with the three files. The Obsidian community
 directory installs from that release.
 
 The wiring of `just`, `moon` and `nix` follows the project-bootstrap template.

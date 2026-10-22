@@ -2,8 +2,8 @@ name: Release
 
 on:
   push:
-    tags:
-      - '[0-9]+.[0-9]+.[0-9]+'
+    branches:
+      - main
 
 permissions:
   contents: write
@@ -13,15 +13,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
-      - name: Check the tag matches the manifest version
-        run: test "$GITHUB_REF_NAME" = "$(jq -r .version manifest.json)"
-      - uses: cachix/install-nix-action@v31.11.1
-      - run: nix develop --command just lint
-      - run: nix develop --command just test all
-      - run: nix develop --command just build all
+      - name: Read the version from the manifest
+        run: echo "VERSION=$(jq -r .version manifest.json)" >> "$GITHUB_ENV"
+      - name: Skip when this version is already released
+        run: |
+          if gh release view "$VERSION" >/dev/null 2>&1; then
+            echo "SKIP=true" >> "$GITHUB_ENV"
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - if: env.SKIP != 'true'
+        uses: cachix/install-nix-action@v31.11.1
+      - if: env.SKIP != 'true'
+        run: nix develop --command just lint
+      - if: env.SKIP != 'true'
+        run: nix develop --command just test all
+      - if: env.SKIP != 'true'
+        run: nix develop --command just build all
       - name: Publish the release
+        if: env.SKIP != 'true'
         run: >-
-          gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --generate-notes
+          gh release create "$VERSION" --target "$GITHUB_SHA" --title "$VERSION" --generate-notes
           apps/workout-tracker/dist/main.js
           apps/workout-tracker/dist/manifest.json
           apps/workout-tracker/dist/styles.css
