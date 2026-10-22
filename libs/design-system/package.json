@@ -1,0 +1,25 @@
+{
+  "name": "design-system",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./types": "./src/types.ts",
+    "./*": "./src/*.svelte"
+  },
+  "scripts": {
+    "lint": "biome ci && eslint && svelte-check --fail-on-warnings",
+    "format": "biome check --write && eslint --fix"
+  },
+  "peerDependencies": {
+    "svelte": "catalog:"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "catalog:",
+    "eslint": "catalog:",
+    "eslint-plugin-svelte": "catalog:",
+    "svelte": "catalog:",
+    "svelte-check": "catalog:",
+    "typescript": "catalog:",
+    "typescript-eslint": "catalog:"
+  }
+}

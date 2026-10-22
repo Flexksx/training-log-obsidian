@@ -1,4 +1,4 @@
-import type { CatalogEntry } from "./catalog.ts";
+import type { CatalogEntry } from "./catalog-entry.ts";
 
 export const BUILT_IN_CATALOG: readonly CatalogEntry[] = [
   { name: "Barbell Bench Press", group: "Chest" },

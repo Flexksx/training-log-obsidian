@@ -1,4 +1,5 @@
-import { exerciseKey, type MuscleGroup, muscleGroupOf } from "./catalog.ts";
+import { exerciseKey, muscleGroupOf } from "./catalog.ts";
+import type { MuscleGroup } from "./catalog-entry.ts";
 import type { ExerciseSet, SetKind } from "./exercise-set.ts";
 import type { Session, Workout } from "./session.ts";
 

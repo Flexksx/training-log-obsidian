@@ -18,8 +18,6 @@ truth. The plugin reads them and writes sets back into them.
 
 ## Boundaries
 
-- Each lib is one domain in plain TypeScript. A lib never imports `obsidian` or
-  `svelte`. Its `package.json` does not list them, so such an import fails.
 - Libs do not import each other. The app composes them.
 - Libs ship TypeScript source with no build step. The app imports a module by
   its subpath, for example `workout/session`. Imports inside a lib keep the
@@ -35,6 +33,9 @@ truth. The plugin reads them and writes sets back into them.
 - ESLint runs only the `eslint-plugin-svelte` rules, on `.svelte` and
   `.svelte.ts` files. It holds no style rules, so it never fights Biome.
 - `svelte-check` type-checks the plugin. `tsc` type-checks each lib.
+- dependency-cruiser enforces the import boundaries between apps, libs and
+  layers. The rules and their reasons are in `.dependency-cruiser.cjs`. `just lint`
+  runs them.
 - Dev tool versions shared by several units live in the pnpm `catalog` in
   `pnpm-workspace.yaml`. Biome is pinned exactly, because its output changes
   between versions.

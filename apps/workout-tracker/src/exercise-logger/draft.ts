@@ -18,10 +18,10 @@ const MINUTE_STEP = 1;
 const SECOND_STEP = 5;
 
 export const KIND_OPTIONS = [
-  { kind: "weight", label: "Weight" },
-  { kind: "body", label: "Body weight" },
-  { kind: "time", label: "Time" },
-] as const satisfies readonly { kind: SetKind; label: string }[];
+  { value: "weight", label: "Weight" },
+  { value: "body", label: "Body weight" },
+  { value: "time", label: "Time" },
+] as const satisfies readonly { value: SetKind; label: string }[];
 
 export const KIND_FIELDS: Record<SetKind, readonly { label: string; field: DraftField; step: number }[]> = {
   weight: [
@@ -71,3 +71,5 @@ export const setFromDraft = (draft: Draft): ExerciseSet | undefined => {
     }
   }
 };
+
+export const missingInputMessage = (kind: SetKind): string => (kind === "time" ? "Enter a time" : "Enter reps");

@@ -21,9 +21,27 @@ tasks:
     options:
       runFromWorkspaceRoot: true
 
+  lint-dependencies:
+    command: 'pnpm exec depcruise apps libs --config .dependency-cruiser.cjs'
+    toolchains: 'system'
+    deps:
+      - 'install'
+    inputs:
+      - 'apps/*/src/**/*'
+      - 'libs/*/src/**/*'
+      - 'libs/*/tests/**/*'
+      - 'apps/*/package.json'
+      - 'libs/*/package.json'
+      - '.dependency-cruiser.cjs'
+      - 'config/dependency-cruiser.base.cjs'
+    options:
+      runFromWorkspaceRoot: true
+
   lint:
     script: 'rumdl check . && alejandra --check .'
     toolchains: 'system'
+    deps:
+      - 'lint-dependencies'
     inputs:
       - '**/*.md'
       - '**/*.nix'

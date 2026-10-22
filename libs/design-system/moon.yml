@@ -1,0 +1,10 @@
+$schema: 'https://moonrepo.dev/schemas/v2/project.json'
+
+language: 'typescript'
+layer: 'library'
+stack: 'frontend'
+tags: ['typescript']
+
+workspace:
+  inheritedTasks:
+    exclude: ['build']

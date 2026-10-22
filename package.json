@@ -3,6 +3,9 @@
   "private": true,
   "type": "module",
   "devDependencies": {
-    "@biomejs/biome": "catalog:"
+    "@biomejs/biome": "catalog:",
+    "dependency-cruiser": "^18.7.0",
+    "svelte": "catalog:",
+    "typescript": "catalog:"
   }
 }

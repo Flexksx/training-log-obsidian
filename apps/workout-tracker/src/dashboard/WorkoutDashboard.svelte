@@ -1,4 +1,6 @@
 <script lang="ts">
+  import Text from "design-system/Text";
+  import Theme from "design-system/Theme";
   import { type App, debounce, Platform } from "obsidian";
   import ConsistencyHeatmap from "./ConsistencyHeatmap.svelte";
   import ExerciseProgressList from "./ExerciseProgressList.svelte";
@@ -36,23 +38,35 @@
   const openNote = (notePath: string) => void app.workspace.openLinkText(notePath, sourcePath, false);
 </script>
 
-{#if loadError}
-  <div class="wd-error">Workout dashboard error: {loadError.message}</div>
-{:else if dashboard}
-  <div class="wd">
-    <SummaryTiles days={dashboard.days} today={dashboard.today} visits={dashboard.visits} />
-    <ConsistencyHeatmap
-      days={dashboard.days}
-      today={dashboard.today}
-      weekCount={Platform.isMobile ? HEATMAP_WEEKS_MOBILE : HEATMAP_WEEKS_DESKTOP}
-    />
-    {#if dashboard.visits.length}
-      <RecentSessions visits={dashboard.visits} workouts={dashboard.workouts} onOpen={openNote} />
-    {/if}
-    <WeeklyEnergy visits={dashboard.visits} today={dashboard.today} />
-    {#if dashboard.progress.length}
-      <MuscleVolume progress={dashboard.progress} today={dashboard.today} />
-      <ExerciseProgressList progress={dashboard.progress} today={dashboard.today} onOpen={openNote} />
-    {/if}
-  </div>
-{/if}
+<Theme>
+  {#if loadError}
+    <Text variant="error">Workout dashboard error: {loadError.message}</Text>
+  {:else if dashboard}
+    <div class="dashboard">
+      <SummaryTiles days={dashboard.days} today={dashboard.today} visits={dashboard.visits} />
+      <ConsistencyHeatmap
+        days={dashboard.days}
+        today={dashboard.today}
+        weekCount={Platform.isMobile ? HEATMAP_WEEKS_MOBILE : HEATMAP_WEEKS_DESKTOP}
+      />
+      {#if dashboard.visits.length}
+        <RecentSessions visits={dashboard.visits} workouts={dashboard.workouts} onOpen={openNote} />
+      {/if}
+      <WeeklyEnergy visits={dashboard.visits} today={dashboard.today} />
+      {#if dashboard.progress.length}
+        <MuscleVolume progress={dashboard.progress} today={dashboard.today} />
+        <ExerciseProgressList progress={dashboard.progress} today={dashboard.today} onOpen={openNote} />
+      {/if}
+    </div>
+  {/if}
+</Theme>
+
+<style>
+  .dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-space-xl);
+    margin: var(--ds-space-s) 0 var(--ds-space-2xl);
+    container-type: inline-size;
+  }
+</style>

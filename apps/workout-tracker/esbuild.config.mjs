@@ -1,9 +1,16 @@
-import { copyFile, mkdir } from "node:fs/promises";
+import { copyFile, mkdir, rename } from "node:fs/promises";
 import { builtinModules } from "node:module";
 import esbuild from "esbuild";
 import sveltePlugin from "esbuild-svelte";
 
 const outputDirectory = process.env.OBSIDIAN_PLUGIN_DIR ?? "dist";
+
+const renameStylesheet = {
+  name: "rename-stylesheet",
+  setup(build) {
+    build.onEnd(() => rename(`${outputDirectory}/main.css`, `${outputDirectory}/styles.css`));
+  },
+};
 
 const options = {
   entryPoints: ["src/main.ts"],
@@ -13,12 +20,12 @@ const options = {
   target: "es2022",
   conditions: ["svelte", "browser"],
   external: ["obsidian", "electron", "@codemirror/*", "@lezer/*", ...builtinModules],
-  plugins: [sveltePlugin({ compilerOptions: { css: "external" } })],
+  plugins: [sveltePlugin({ compilerOptions: { css: "external" } }), renameStylesheet],
   logLevel: "info",
 };
 
 await mkdir(outputDirectory, { recursive: true });
-await Promise.all(["manifest.json", "styles.css"].map(file => copyFile(file, `${outputDirectory}/${file}`)));
+await copyFile("manifest.json", `${outputDirectory}/manifest.json`);
 
 if (process.argv.includes("--watch")) await (await esbuild.context(options)).watch();
 else await esbuild.build(options);

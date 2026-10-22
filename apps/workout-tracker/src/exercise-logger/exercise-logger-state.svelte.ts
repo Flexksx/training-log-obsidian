@@ -1,6 +1,6 @@
 import type { Draft } from "./draft.ts";
 
-export class LoggerState {
+export class ExerciseLoggerState {
   #activeExercise = $state<string>();
   #isAdding = $state(false);
   #query = $state("");

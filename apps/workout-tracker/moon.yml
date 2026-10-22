@@ -10,5 +10,4 @@ tasks:
     inputs:
       - '$OBSIDIAN_PLUGIN_DIR'
       - 'manifest.json'
-      - 'styles.css'
       - 'esbuild.config.mjs'

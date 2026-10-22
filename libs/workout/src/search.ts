@@ -1,5 +1,6 @@
 import { BUILT_IN_CATALOG } from "./built-in-catalog.ts";
-import { type CatalogEntry, exerciseKey, muscleGroupOf } from "./catalog.ts";
+import { exerciseKey, muscleGroupOf } from "./catalog.ts";
+import type { CatalogEntry } from "./catalog-entry.ts";
 
 export type SearchEntry = CatalogEntry & { recentRank?: number };
 

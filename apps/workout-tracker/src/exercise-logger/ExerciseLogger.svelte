@@ -1,5 +1,7 @@
 <script lang="ts">
   import type { IsoDate } from "activity/iso-date";
+  import Text from "design-system/Text";
+  import Theme from "design-system/Theme";
   import { type App, Notice, type TFile } from "obsidian";
   import type { ExerciseSet } from "workout/exercise-set";
   import { lastPerformance } from "workout/progress";
@@ -16,11 +18,11 @@
   import { loadWorkoutsNewestFirst, noteDate } from "../notes.ts";
   import AddExercise from "./AddExercise.svelte";
   import ExerciseCard from "./ExerciseCard.svelte";
-  import type { LoggerState } from "./logger-state.svelte.ts";
+  import type { ExerciseLoggerState } from "./exercise-logger-state.svelte.ts";
 
   type History = { sessionDate: IsoDate; pastWorkouts: Workout[] };
 
-  let { app, file, ui }: { app: App; file: TFile; ui: LoggerState } = $props();
+  let { app, file, ui }: { app: App; file: TFile; ui: ExerciseLoggerState } = $props();
 
   let noteText = $state<string>();
   let history = $state<History>();
@@ -57,7 +59,7 @@
   const previous = $derived(active && history && lastPerformance(history.pastWorkouts, active.name, history.sessionDate));
 
   const editNote = (change: (text: string) => string) =>
-    app.vault.process(file, change).catch((error: Error) => new Notice(`Workout logger: ${error.message}`));
+    app.vault.process(file, change).catch((error: Error) => new Notice(`Exercise logger: ${error.message}`));
 
   const addExercise = (exerciseName: string) => {
     ui.exerciseAdded(exerciseName);
@@ -65,20 +67,32 @@
   };
 </script>
 
-{#if loadError}
-  <div class="wl-error">Workout logger error: {loadError.message}</div>
-{:else if noteText !== undefined && history}
-  <div class="wl">
-    {#each session.exercises as exercise, index (index)}
-      <ExerciseCard
-        {exercise}
-        {ui}
-        isActive={exercise === active}
-        previous={exercise === active ? previous : undefined}
-        onLogSet={(set: ExerciseSet) => editNote(text => appendSet(text, exercise.name, set))}
-        onDeleteSet={(setIndex: number) => editNote(text => deleteSet(text, exercise.name, setIndex))}
-      />
-    {/each}
-    <AddExercise {ui} {catalog} {takenNames} onAdd={addExercise} />
-  </div>
-{/if}
+<Theme>
+  {#if loadError}
+    <Text variant="error">Exercise logger error: {loadError.message}</Text>
+  {:else if noteText !== undefined && history}
+    <div class="exercise-logger">
+      {#each session.exercises as exercise, index (index)}
+        <ExerciseCard
+          {exercise}
+          {ui}
+          isActive={exercise === active}
+          previous={exercise === active ? previous : undefined}
+          onLogSet={(set: ExerciseSet) => editNote(text => appendSet(text, exercise.name, set))}
+          onDeleteSet={(setIndex: number) => editNote(text => deleteSet(text, exercise.name, setIndex))}
+        />
+      {/each}
+      <AddExercise {ui} {catalog} {takenNames} onAdd={addExercise} />
+    </div>
+  {/if}
+</Theme>
+
+<style>
+  .exercise-logger {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ds-space-s);
+    margin: var(--ds-space-xs) 0 var(--ds-space-l);
+    container-type: inline-size;
+  }
+</style>

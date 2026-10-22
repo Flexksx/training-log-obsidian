@@ -1,8 +1,9 @@
 import { type MarkdownPostProcessorContext, MarkdownRenderChild, Plugin, TFile } from "obsidian";
 import { type Component, mount, unmount } from "svelte";
 import WorkoutDashboard from "./dashboard/WorkoutDashboard.svelte";
-import { LoggerState } from "./logger/logger-state.svelte.ts";
-import WorkoutLogger from "./logger/WorkoutLogger.svelte";
+import ErrorMessage from "./ErrorMessage.svelte";
+import ExerciseLogger from "./exercise-logger/ExerciseLogger.svelte";
+import { ExerciseLoggerState } from "./exercise-logger/exercise-logger-state.svelte.ts";
 
 const mountView = <Props extends Record<string, unknown>>(
   view: Component<Props>,
@@ -17,25 +18,25 @@ const mountView = <Props extends Record<string, unknown>>(
 };
 
 export default class WorkoutTrackerPlugin extends Plugin {
-  readonly #loggerStatesByNotePath = new Map<string, LoggerState>();
+  readonly #exerciseLoggerStatesByNotePath = new Map<string, ExerciseLoggerState>();
 
   override async onload(): Promise<void> {
     this.registerMarkdownCodeBlockProcessor("workout-logger", (_source, element, context) => {
       const file = this.app.vault.getAbstractFileByPath(context.sourcePath);
       if (!(file instanceof TFile)) {
-        element.createDiv({ cls: "wl-error", text: `Workout logger: cannot find ${context.sourcePath}` });
+        mountView(ErrorMessage, { message: `Exercise logger: cannot find ${context.sourcePath}` }, element, context);
         return;
       }
-      mountView(WorkoutLogger, { app: this.app, file, ui: this.#loggerStateFor(file.path) }, element, context);
+      mountView(ExerciseLogger, { app: this.app, file, ui: this.#exerciseLoggerStateFor(file.path) }, element, context);
     });
     this.registerMarkdownCodeBlockProcessor("workout-dashboard", (_source, element, context) =>
       mountView(WorkoutDashboard, { app: this.app, sourcePath: context.sourcePath }, element, context),
     );
   }
 
-  #loggerStateFor(notePath: string): LoggerState {
-    const state = this.#loggerStatesByNotePath.get(notePath) ?? new LoggerState();
-    this.#loggerStatesByNotePath.set(notePath, state);
+  #exerciseLoggerStateFor(notePath: string): ExerciseLoggerState {
+    const state = this.#exerciseLoggerStatesByNotePath.get(notePath) ?? new ExerciseLoggerState();
+    this.#exerciseLoggerStatesByNotePath.set(notePath, state);
     return state;
   }
 }

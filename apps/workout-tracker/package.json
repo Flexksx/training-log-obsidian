@@ -10,18 +10,19 @@
   },
   "dependencies": {
     "activity": "workspace:*",
-    "svelte": "^5.57.2",
+    "design-system": "workspace:*",
+    "svelte": "catalog:",
     "workout": "workspace:*"
   },
   "devDependencies": {
     "@biomejs/biome": "catalog:",
     "esbuild": "^0.28.2",
     "esbuild-svelte": "^0.9.5",
-    "eslint": "^10.13.0",
-    "eslint-plugin-svelte": "^3.23.1",
+    "eslint": "catalog:",
+    "eslint-plugin-svelte": "catalog:",
     "obsidian": "^1.14.4",
-    "svelte-check": "^4.7.7",
+    "svelte-check": "catalog:",
     "typescript": "catalog:",
-    "typescript-eslint": "^8.72.0"
+    "typescript-eslint": "catalog:"
   }
 }
