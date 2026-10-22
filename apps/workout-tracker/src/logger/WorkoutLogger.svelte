@@ -1,6 +1,6 @@
 <script lang="ts">
-  import { Notice, type App, type TFile } from "obsidian";
   import type { IsoDate } from "activity/iso-date";
+  import { type App, Notice, type TFile } from "obsidian";
   import type { ExerciseSet } from "workout/exercise-set";
   import { lastPerformance } from "workout/progress";
   import { mergeCatalog } from "workout/search";
@@ -69,7 +69,7 @@
   <div class="wl-error">Workout logger error: {loadError.message}</div>
 {:else if noteText !== undefined && history}
   <div class="wl">
-    {#each session.exercises as exercise}
+    {#each session.exercises as exercise, index (index)}
       <ExerciseCard
         {exercise}
         {ui}

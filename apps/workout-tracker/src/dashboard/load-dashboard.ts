@@ -1,8 +1,8 @@
-import type { App } from "obsidian";
-import { buildActivityDays, type ActivityDays } from "activity/consistency";
-import { toIsoDate, type IsoDate } from "activity/iso-date";
+import { type ActivityDays, buildActivityDays } from "activity/consistency";
+import { type IsoDate, toIsoDate } from "activity/iso-date";
 import type { Visit } from "activity/visit";
-import { exerciseProgress, type ExerciseProgress } from "workout/progress";
+import type { App } from "obsidian";
+import { type ExerciseProgress, exerciseProgress } from "workout/progress";
 import type { Workout } from "workout/session";
 import { loadDailyTasks, loadVisits, loadWorkoutsNewestFirst } from "../notes.ts";
 

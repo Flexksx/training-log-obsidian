@@ -4,3 +4,8 @@ packages:
 
 allowBuilds:
   esbuild: true
+
+catalog:
+  '@biomejs/biome': 2.5.15
+  typescript: ^6.0.3
+

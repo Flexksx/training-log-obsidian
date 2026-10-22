@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { isKnownName, resolveName, searchCatalog, type SearchEntry } from "workout/search";
+  import { isKnownName, resolveName, type SearchEntry, searchCatalog } from "workout/search";
   import type { LoggerState } from "./logger-state.svelte.ts";
 
   let {
@@ -30,33 +30,33 @@
 </script>
 
 {#if hasExercises && !ui.isAdding}
-  <button class="wl-add-btn" onclick={() => ui.openAdd()}>+ Add exercise</button>
+  <button type="button" class="wl-add-btn" onclick={() => ui.openAdd()}>+ Add exercise</button>
 {:else}
   <div class="wl-card is-active">
     <div class="wl-head">
       <div class="wl-name">{hasExercises ? "Add exercise" : "Start with your first exercise"}</div>
       {#if hasExercises}
-        <button class="wl-link" onclick={() => ui.closeAdd()}>Cancel</button>
+        <button type="button" class="wl-link" onclick={() => ui.closeAdd()}>Cancel</button>
       {/if}
     </div>
     <div class="wl-body">
       <input
         type="search"
         class="wl-search"
-        placeholder={'Search, for example "bp" or "inc db"'}
+        placeholder="Search, for example &quot;bp&quot; or &quot;inc db&quot;"
         bind:value={ui.query}
         onkeydown={addTopResult}
         {@attach focusWhenAdding}
       />
       <div class="wl-chips">
         {#each results as entry (entry.name)}
-          <button class="wl-chip" onclick={() => onAdd(entry.name)}>
+          <button type="button" class="wl-chip" onclick={() => onAdd(entry.name)}>
             <span>{entry.name}</span>
             <span class="wl-chip-group">{entry.recentRank === undefined ? entry.group : "recent"}</span>
           </button>
         {/each}
         {#if canCreate}
-          <button class="wl-chip mod-cta" onclick={() => onAdd(typed)}>+ New: “{typed}”</button>
+          <button type="button" class="wl-chip mod-cta" onclick={() => onAdd(typed)}>+ New: “{typed}”</button>
         {/if}
         {#if !results.length && !canCreate}
           <div class="wl-muted">Type a name to search or add an exercise.</div>

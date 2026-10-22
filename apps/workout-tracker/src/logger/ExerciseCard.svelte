@@ -1,9 +1,9 @@
 <script lang="ts">
   import { Notice } from "obsidian";
-  import { formatClock, formatSet, formatShortSet, type ExerciseSet } from "workout/exercise-set";
+  import { type ExerciseSet, formatClock, formatSet, formatShortSet } from "workout/exercise-set";
   import type { Exercise } from "workout/session";
   import { formatDayMonth, pluralize } from "../format.ts";
-  import { KIND_FIELDS, KIND_OPTIONS, seedDraft, setFromDraft, withField, type DraftField } from "./draft.ts";
+  import { type DraftField, KIND_FIELDS, KIND_OPTIONS, seedDraft, setFromDraft, withField } from "./draft.ts";
   import type { LoggerState } from "./logger-state.svelte.ts";
   import Stepper from "./Stepper.svelte";
 
@@ -51,10 +51,6 @@
     if (set) onLogSet(set);
     else new Notice(draft.kind === "time" ? "Enter a time" : "Enter reps");
   };
-
-  const selectOnKey = (event: KeyboardEvent) => {
-    if (event.key === "Enter" || event.key === " ") ui.select(exercise.name);
-  };
 </script>
 
 <div class="wl-card" class:is-active={isActive}>
@@ -76,7 +72,7 @@
             <div class="wl-set">
               <span class="wl-set-n">{index + 1}</span>
               <span class="wl-set-v">{formatSet(set)}</span>
-              <button class="wl-del clickable-icon" aria-label="Delete set" onclick={() => onDeleteSet(index)}>✕</button>
+              <button type="button" class="wl-del clickable-icon" aria-label="Delete set" onclick={() => onDeleteSet(index)}>✕</button>
             </div>
           {/each}
         </div>
@@ -84,7 +80,7 @@
 
       <div class="wl-kinds">
         {#each KIND_OPTIONS as option (option.kind)}
-          <button
+          <button type="button"
             class="wl-kind"
             class:mod-cta={option.kind === draft.kind}
             onclick={() => ui.saveDraft(exercise.name, { ...draft, kind: option.kind })}
@@ -98,13 +94,13 @@
         {#each fields as { label, field, step } (field)}
           <Stepper {label} {step} bind:value={() => draft[field], value => setField(field, value)} />
         {/each}
-        <button class="mod-cta wl-log" onclick={logSet}>Log set {exercise.sets.length + 1}</button>
+        <button type="button" class="mod-cta wl-log" onclick={logSet}>Log set {exercise.sets.length + 1}</button>
       </div>
     </div>
   {:else}
-    <div class="wl-head" role="button" tabindex="0" onclick={() => ui.select(exercise.name)} onkeydown={selectOnKey}>
-      <div class="wl-name">{exercise.name}</div>
-      <div class="wl-meta">{summarize(exercise.sets)}</div>
-    </div>
+    <button type="button" class="wl-head" onclick={() => ui.select(exercise.name)}>
+      <span class="wl-name">{exercise.name}</span>
+      <span class="wl-meta">{summarize(exercise.sets)}</span>
+    </button>
   {/if}
 </div>

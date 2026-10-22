@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import { muscleGroupOf } from "../src/catalog.ts";
 import { formatSet, parseSet } from "../src/exercise-set.ts";
 import { exerciseProgress, lastPerformance } from "../src/progress.ts";
 import { mergeCatalog, searchCatalog } from "../src/search.ts";
@@ -40,23 +41,27 @@ test("formatSet output parses back to the same set", () => {
     { kind: "body", reps: 12 },
     { kind: "time", seconds: 95 },
   ] as const;
-  sets.forEach(set => assert.deepEqual(parseSet(`- ${formatSet(set)}`), set));
+  for (const set of sets) assert.deepEqual(parseSet(`- ${formatSet(set)}`), set);
 });
 
 test("parseSession groups sets under headings and tracks the last content line", () => {
   const { exercises } = parseSession(NOTE);
   assert.deepEqual(
     exercises.map(exercise => [exercise.name, exercise.sets.length]),
-    [["Incline Bench Press", 2], ["Hanging Knee Abs", 2], ["Plank", 2]],
+    [
+      ["Incline Bench Press", 2],
+      ["Hanging Knee Abs", 2],
+      ["Plank", 2],
+    ],
   );
-  assert.equal(NOTE.split("\n")[exercises[1]!.lastLine], "felt easy");
+  assert.equal(NOTE.split("\n")[exercises[1]?.lastLine ?? -1], "felt easy");
 });
 
 test("text edits add and remove lines in place", () => {
   const added = appendSet(NOTE, "Incline Bench Press", { kind: "weight", reps: 6, kilograms: 60 });
-  assert.deepEqual(parseSession(added).exercises[0]!.sets.at(-1), { kind: "weight", reps: 6, kilograms: 60, line: 9 });
+  assert.deepEqual(parseSession(added).exercises[0]?.sets.at(-1), { kind: "weight", reps: 6, kilograms: 60, line: 9 });
   const removed = deleteSet(added, "Incline Bench Press", 0);
-  assert.equal(parseSession(removed).exercises[0]!.sets.length, 2);
+  assert.equal(parseSession(removed).exercises[0]?.sets.length, 2);
   assert.match(appendExercise(NOTE, "Squat"), /- 45 s\n\n## Squat\n$/);
   assert.equal(appendExercise(NOTE, "Plank"), NOTE);
   assert.throws(() => appendSet(NOTE, "Squat", { kind: "body", reps: 5 }), ExerciseNotFoundError);
@@ -80,4 +85,10 @@ test("progress compares estimated one-rep max and finds the last earlier session
   assert.ok((squat?.change ?? 0) > 0);
   assert.equal(lastPerformance(workouts.toReversed(), "Squat", "2026-10-04")?.date, "2026-10-01");
   assert.equal(lastPerformance(workouts.toReversed(), "Squat", "2026-10-01"), undefined);
+});
+
+test("muscle group rules check arms before back, so a triceps pulldown is arms", () => {
+  assert.equal(muscleGroupOf("Cable Triceps Pulldown"), "Arms");
+  assert.equal(muscleGroupOf("Wide Grip Lat Pulldown"), "Back");
+  assert.equal(muscleGroupOf("Triceps Pushdown"), "Arms");
 });

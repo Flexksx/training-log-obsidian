@@ -5,7 +5,8 @@
   "scripts": {
     "build": "node esbuild.config.mjs",
     "dev": "node esbuild.config.mjs --watch",
-    "lint": "svelte-check --fail-on-warnings"
+    "lint": "biome ci && eslint && svelte-check --fail-on-warnings",
+    "format": "biome check --write && eslint --fix"
   },
   "dependencies": {
     "activity": "workspace:*",
@@ -13,10 +14,14 @@
     "workout": "workspace:*"
   },
   "devDependencies": {
+    "@biomejs/biome": "catalog:",
     "esbuild": "^0.28.2",
     "esbuild-svelte": "^0.9.5",
+    "eslint": "^10.13.0",
+    "eslint-plugin-svelte": "^3.23.1",
     "obsidian": "^1.14.4",
     "svelte-check": "^4.7.7",
-    "typescript": "^6.0.3"
+    "typescript": "catalog:",
+    "typescript-eslint": "^8.72.0"
   }
 }

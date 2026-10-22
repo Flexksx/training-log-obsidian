@@ -4,3 +4,11 @@ language: 'typescript'
 layer: 'application'
 stack: 'frontend'
 tags: ['typescript']
+
+tasks:
+  build:
+    inputs:
+      - '$OBSIDIAN_PLUGIN_DIR'
+      - 'manifest.json'
+      - 'styles.css'
+      - 'esbuild.config.mjs'

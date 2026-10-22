@@ -1,11 +1,5 @@
-/**
- * Fuzzy search over the built-in catalog plus the names from past sessions.
- * A query matches when every word is a subsequence of the name.
- * Consecutive letters and word starts score higher, so "inc db" finds
- * "Incline Dumbbell Press".
- */
 import { BUILT_IN_CATALOG } from "./built-in-catalog.ts";
-import { exerciseKey, muscleGroupOf, type CatalogEntry } from "./catalog.ts";
+import { type CatalogEntry, exerciseKey, muscleGroupOf } from "./catalog.ts";
 
 export type SearchEntry = CatalogEntry & { recentRank?: number };
 
@@ -19,7 +13,6 @@ const MIN_SCORE_PER_LETTER = 2;
 const LENGTH_PENALTY = 0.01;
 const WORD_SEPARATORS = " -(";
 
-/** A past-session spelling replaces the catalog one, so stats keep one name per exercise. */
 export const mergeCatalog = (recentNames: readonly string[]): SearchEntry[] => {
   const byKey = new Map<string, SearchEntry>(BUILT_IN_CATALOG.map(entry => [exerciseKey(entry.name), entry]));
   recentNames.forEach((name, recentRank) => {
@@ -43,14 +36,14 @@ const scoreFrom = (token: string, target: string, start: number): number | undef
   for (const letter of token) {
     const index = target.indexOf(letter, from);
     if (index < 0) return undefined;
-    score += (index === previous + 1 ? CONSECUTIVE_SCORE : LETTER_SCORE) + (isWordStart(target, index) ? WORD_START_BONUS : 0);
+    score +=
+      (index === previous + 1 ? CONSECUTIVE_SCORE : LETTER_SCORE) + (isWordStart(target, index) ? WORD_START_BONUS : 0);
     from = index + 1;
     previous = index;
   }
   return score;
 };
 
-/** Scattered matches score under two points per letter and count as no match. */
 const scoreToken = (token: string, target: string): number | undefined => {
   const starts = [...target].flatMap((letter, index) => (letter === token[0] ? [index] : []));
   const best = Math.max(-1, ...starts.map(start => scoreFrom(token, target, start) ?? -1));
@@ -59,7 +52,9 @@ const scoreToken = (token: string, target: string): number | undefined => {
 
 const fuzzyScore = (query: string, name: string): number | undefined => {
   const target = searchText(name);
-  const scores = searchText(query).split(" ").map(token => scoreToken(token, target));
+  const scores = searchText(query)
+    .split(" ")
+    .map(token => scoreToken(token, target));
   if (scores.some(score => score === undefined)) return undefined;
   return scores.reduce<number>((total, score) => total + (score ?? 0), 0) - target.length * LENGTH_PENALTY;
 };

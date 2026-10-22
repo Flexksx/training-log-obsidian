@@ -1,7 +1,7 @@
 <script lang="ts">
   import { ACTIVITIES, activityLabel } from "activity/activities";
   import type { ActivityDay, ActivityDays } from "activity/consistency";
-  import { addDays, addWeeks, DAYS_PER_WEEK, fromIsoDate, weekStart, type IsoDate } from "activity/iso-date";
+  import { addDays, addWeeks, DAYS_PER_WEEK, fromIsoDate, type IsoDate, weekStart } from "activity/iso-date";
   import { formatDate, formatShortDate } from "../format.ts";
   import DashboardSection from "./DashboardSection.svelte";
 
@@ -31,7 +31,6 @@
 
   const firstWeek = $derived(addWeeks(weekStart(today), -(weekCount - 1)));
 
-  /** A month label sits on the first week of a new month. The first column gets one only when the next month is 3+ weeks away. */
   const monthLabels = $derived(
     Array.from({ length: weekCount }, (_, week) => {
       const date = addWeeks(firstWeek, week);
@@ -58,14 +57,14 @@
 <DashboardSection title="Consistency" note="last {weekCount} weeks">
   <div class="wd-heat" style:--weeks={weekCount}>
     <span class="wd-heat-corner"></span>
-    {#each monthLabels as label, week}
+    {#each monthLabels as label, week (week)}
       <span class="wd-heat-month" style:grid-column={week + LABEL_OFFSET}>{label}</span>
     {/each}
-    {#each DAY_LABELS as label, row}
+    {#each DAY_LABELS as label, row (row)}
       <span class="wd-heat-day" style:grid-row={row + LABEL_OFFSET}>{label}</span>
     {/each}
     {#each cells as cell (cell.date)}
-      <button
+      <button type="button"
         class="wd-cell {cellClass(days.get(cell.date))}"
         class:is-today={cell.date === today}
         style:grid-column={cell.column}

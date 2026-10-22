@@ -1,10 +1,5 @@
-/**
- * Merges daily-note tasks and activity notes into one map of days.
- * A task marked [x] is done and [-] is missed. Any other task on a past day
- * is missed. An activity note on a day makes that activity done.
- */
-import { ACTIVITIES, activityOfTask, type ActivityKey } from "./activities.ts";
-import { addDays, addWeeks, weekEnd, weekStart, type IsoDate } from "./iso-date.ts";
+import { ACTIVITIES, type ActivityKey, activityOfTask } from "./activities.ts";
+import { addDays, addWeeks, type IsoDate, weekEnd, weekStart } from "./iso-date.ts";
 import type { Visit } from "./visit.ts";
 
 export type PlannedTask = { date: IsoDate; text: string; status: string };
@@ -32,8 +27,10 @@ export const buildActivityDays = (
     if (DONE_STATUSES.has(task.status)) dayOf(task.date).done.add(activity.key);
     else if (task.status === MISSED_STATUS || task.date < today) dayOf(task.date).missed.add(activity.key);
   });
-  visits.filter(visit => visit.date <= today).forEach(visit => dayOf(visit.date).done.add(visit.activity));
-  days.forEach(day => day.done.forEach(key => day.missed.delete(key)));
+  for (const visit of visits.filter(candidate => candidate.date <= today)) dayOf(visit.date).done.add(visit.activity);
+  for (const day of days.values()) {
+    for (const activity of day.done) day.missed.delete(activity);
+  }
   return days;
 };
 
@@ -50,10 +47,6 @@ export const countByActivity = (days: ActivityDays, from: IsoDate, to: IsoDate):
   ) as Record<ActivityKey, number>;
 };
 
-/**
- * Consecutive weeks at target, ending at the last full week.
- * The current week adds one only when it already hit the target.
- */
 export const weekStreaks = (days: ActivityDays, today: IsoDate): { current: number; best: number } => {
   const thisWeek = weekStart(today);
   const first = [...days.keys()].sort()[0];
@@ -78,6 +71,9 @@ export const lastActivity = (
   days: ActivityDays,
   today: IsoDate,
 ): { date: IsoDate; activities: ActivityKey[] } | undefined => {
-  const date = [...days.keys()].filter(day => day <= today && days.get(day)?.done.size).sort().at(-1);
+  const date = [...days.keys()]
+    .filter(day => day <= today && days.get(day)?.done.size)
+    .sort()
+    .at(-1);
   return date === undefined ? undefined : { date, activities: [...(days.get(date)?.done ?? [])] };
 };
