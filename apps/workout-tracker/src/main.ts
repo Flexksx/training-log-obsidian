@@ -1,4 +1,6 @@
 import {
+  AbstractInputSuggest,
+  type App,
   ItemView,
   type MarkdownPostProcessorContext,
   MarkdownRenderChild,
@@ -6,6 +8,7 @@ import {
   PluginSettingTab,
   Setting,
   TFile,
+  TFolder,
   type WorkspaceLeaf,
 } from "obsidian";
 import { type Component, mount, unmount } from "svelte";
@@ -63,6 +66,35 @@ class DashboardView extends ItemView {
   }
 }
 
+class FolderSuggest extends AbstractInputSuggest<TFolder> {
+  readonly #folders: () => TFolder[];
+  readonly #onChoose: (folderPath: string) => void;
+
+  constructor(app: App, input: HTMLInputElement, onChoose: (folderPath: string) => void) {
+    super(app, input);
+    this.#folders = () =>
+      app.vault.getAllLoadedFiles().filter((file): file is TFolder => file instanceof TFolder && !file.isRoot());
+    this.#onChoose = onChoose;
+  }
+
+  protected override getSuggestions(query: string): TFolder[] {
+    const needle = query.toLowerCase();
+    return this.#folders()
+      .filter(folder => folder.path.toLowerCase().includes(needle))
+      .sort((a, b) => a.path.localeCompare(b.path));
+  }
+
+  override renderSuggestion(folder: TFolder, element: HTMLElement): void {
+    element.setText(folder.path);
+  }
+
+  override selectSuggestion(folder: TFolder): void {
+    this.setValue(folder.path);
+    this.#onChoose(folder.path);
+    this.close();
+  }
+}
+
 class TrainingLogSettingTab extends PluginSettingTab {
   readonly #settings: TrainingLogSettings;
   readonly #save: (data: SettingsData) => Promise<void>;
@@ -78,15 +110,18 @@ class TrainingLogSettingTab extends PluginSettingTab {
     new Setting(this.containerEl)
       .setName("Activity folder")
       .setDesc("The folder with your activity notes, subfolders included. Leave it empty to read the whole vault.")
-      .addText(text =>
+      .addText(text => {
         text
           .setPlaceholder("Whole vault")
           .setValue(this.#settings.activityFolder)
-          .onChange(value => {
-            this.#settings.activityFolder = value;
-            void this.#save(this.#settings.toData());
-          }),
-      );
+          .onChange(folderPath => this.#setActivityFolder(folderPath));
+        new FolderSuggest(this.app, text.inputEl, folderPath => this.#setActivityFolder(folderPath));
+      });
+  }
+
+  #setActivityFolder(folderPath: string): void {
+    this.#settings.activityFolder = folderPath;
+    void this.#save(this.#settings.toData());
   }
 }
 
