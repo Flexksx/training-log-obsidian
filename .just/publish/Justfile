@@ -1,0 +1,3 @@
+[doc("Build the plugin into the vault plugin folder in OBSIDIAN_PLUGIN_DIR")]
+publish:
+    OBSIDIAN_PLUGIN_DIR="{{env('OBSIDIAN_PLUGIN_DIR')}}" moon run workout-tracker:build --force

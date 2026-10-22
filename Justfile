@@ -1,5 +1,6 @@
 import '.just/format/Justfile'
 import '.just/lint/Justfile'
+import '.just/publish/Justfile'
 
 mod build '.just/build'
 mod test '.just/test'
