@@ -1,0 +1,29 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - name: Check the tag matches the manifest version
+        run: test "$GITHUB_REF_NAME" = "$(jq -r .version manifest.json)"
+      - uses: cachix/install-nix-action@v31.11.1
+      - run: nix develop --command just lint
+      - run: nix develop --command just test all
+      - run: nix develop --command just build all
+      - name: Publish the release
+        run: >-
+          gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --generate-notes
+          apps/workout-tracker/dist/main.js
+          apps/workout-tracker/dist/manifest.json
+          apps/workout-tracker/dist/styles.css
+        env:
+          GH_TOKEN: ${{ github.token }}
