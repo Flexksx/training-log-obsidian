@@ -1,5 +1,5 @@
-import { activityLabel } from "activity/activities";
-import type { ActivityDay, ActivityDays } from "activity/consistency";
+import { type ActivityKey, activityLabel } from "activity/activities";
+import type { ActivityDays } from "activity/consistency";
 import { addDays, addWeeks, DAYS_PER_WEEK, fromIsoDate, type IsoDate, weekStart } from "activity/iso-date";
 import type { SwatchVariant } from "design-system/types";
 import { formatDate, formatShortDate } from "../format.ts";
@@ -13,21 +13,16 @@ const monthOf = (date: IsoDate): number => fromIsoDate(date).getMonth();
 
 const firstWeekOf = (today: IsoDate, weekCount: number): IsoDate => addWeeks(weekStart(today), -(weekCount - 1));
 
-export const cellVariant = (day: ActivityDay | undefined): SwatchVariant => {
-  if (!day) return "empty";
-  const done = [...day.done];
+export const cellVariant = (activities: ReadonlySet<ActivityKey> | undefined): SwatchVariant => {
+  const done = [...(activities ?? [])];
   if (done.length > 1) return "mixed";
   const [only] = done;
-  if (only) return SERIES_OF_ACTIVITY[only];
-  return day.missed.size ? "missed" : "empty";
+  return only ? SERIES_OF_ACTIVITY[only] : "empty";
 };
 
 export const describeDay = (days: ActivityDays, date: IsoDate): string => {
-  const day = days.get(date);
-  const done = [...(day?.done ?? [])].map(activityLabel);
-  const missed = [...(day?.missed ?? [])].map(activityLabel);
-  const parts = [done.length && done.join(" + "), missed.length && `missed ${missed.join(" + ")}`].filter(Boolean);
-  return `${formatShortDate(date)} · ${parts.join(" · ") || "rest"}`;
+  const done = [...(days.get(date) ?? [])].map(activityLabel);
+  return `${formatShortDate(date)} · ${done.join(" + ") || "rest"}`;
 };
 
 export const monthLabels = (today: IsoDate, weekCount: number): string[] => {

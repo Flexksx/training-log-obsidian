@@ -16,25 +16,32 @@
     type Workout,
   } from "workout/session";
   import { loadWorkoutsNewestFirst, noteDate } from "../notes.ts";
+  import type { TrainingLogSettings } from "../settings.svelte.ts";
   import AddExercise from "./AddExercise.svelte";
   import ExerciseCard from "./ExerciseCard.svelte";
   import type { ExerciseLoggerState } from "./exercise-logger-state.svelte.ts";
 
   type History = { sessionDate: IsoDate; pastWorkouts: Workout[] };
 
-  let { app, file, ui }: { app: App; file: TFile; ui: ExerciseLoggerState } = $props();
+  let {
+    app,
+    file,
+    ui,
+    settings,
+  }: { app: App; file: TFile; ui: ExerciseLoggerState; settings: TrainingLogSettings } = $props();
 
   let noteText = $state<string>();
   let history = $state<History>();
   let loadError = $state<Error>();
 
-  const loadHistory = async (note: TFile): Promise<History> => ({
+  const loadHistory = async (note: TFile, activityFolder: string): Promise<History> => ({
     sessionDate: noteDate(app, note),
-    pastWorkouts: (await loadWorkoutsNewestFirst(app)).filter(workout => workout.notePath !== note.path),
+    pastWorkouts: (await loadWorkoutsNewestFirst(app, activityFolder)).filter(workout => workout.notePath !== note.path),
   });
 
   $effect(() => {
     const note = file;
+    const activityFolder = settings.activityFolder;
     const fail = (error: Error) => {
       loadError = error;
     };
@@ -43,7 +50,7 @@
         noteText = text;
       }, fail);
     void readNote();
-    loadHistory(note).then(loaded => {
+    loadHistory(note, activityFolder).then(loaded => {
       history = loaded;
     }, fail);
     const reference = app.vault.on("modify", changed => {

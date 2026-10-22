@@ -5,16 +5,16 @@
 An Obsidian plugin for physical activity. The vault notes are the source of
 truth. The plugin reads them and writes sets back into them.
 
-- `apps/workout-tracker`: the Obsidian plugin. It registers two code blocks.
-  `workout-logger` goes inside a workout note and logs sets.
-  `workout-dashboard` shows consistency, time and calories, sets per muscle and
-  exercise progress. The app holds the Svelte views and every vault read and
+- `apps/workout-tracker`: the Obsidian plugin. The `workout-logger` code block
+  goes inside a workout note and logs sets. A ribbon icon opens the dashboard
+  in its own tab. It shows consistency, time and calories, sets per muscle and
+  exercise progress. The settings tab sets the activity folder, the only place
+  the plugin reads. The app holds the Svelte views and every vault read and
   write (`src/notes.ts`).
 - `libs/workout`: gym sessions. Set parsing and formatting, note text edits,
   the exercise catalog, fuzzy search and progress stats.
-- `libs/activity`: attendance across activities (gym, capoeira). Daily-note
-  tasks and activity notes become done or missed days, week streaks, and weekly
-  time and calories.
+- `libs/activity`: attendance across activities (gym, capoeira). Activity
+  notes become active days, week streaks, and weekly time and calories.
 
 ## Boundaries
 

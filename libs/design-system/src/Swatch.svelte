@@ -36,10 +36,6 @@
   .mixed {
     background: linear-gradient(135deg, var(--ds-series-primary) 0 50%, var(--ds-series-secondary) 50% 100%);
   }
-  .missed {
-    background: transparent;
-    box-shadow: inset 0 0 0 1.5px var(--ds-text-faint);
-  }
   .marked {
     box-shadow: inset 0 0 0 2px var(--ds-text-muted);
   }

@@ -2,6 +2,7 @@
   import Text from "design-system/Text";
   import Theme from "design-system/Theme";
   import { type App, debounce, Platform } from "obsidian";
+  import type { TrainingLogSettings } from "../settings.svelte.ts";
   import ConsistencyHeatmap from "./ConsistencyHeatmap.svelte";
   import ExerciseProgressList from "./ExerciseProgressList.svelte";
   import { type Dashboard, loadDashboard } from "./load-dashboard.ts";
@@ -10,18 +11,20 @@
   import SummaryTiles from "./SummaryTiles.svelte";
   import WeeklyEnergy from "./WeeklyEnergy.svelte";
 
-  let { app, sourcePath }: { app: App; sourcePath: string } = $props();
+  let { app, settings }: { app: App; settings: TrainingLogSettings } = $props();
 
   const RELOAD_DELAY_MILLISECONDS = 1000;
   const HEATMAP_WEEKS_DESKTOP = 26;
   const HEATMAP_WEEKS_MOBILE = 15;
+  const NO_SOURCE_NOTE = "";
 
   let dashboard = $state<Dashboard>();
   let loadError = $state<Error>();
 
   $effect(() => {
+    const activityFolder = settings.activityFolder;
     const reload = () =>
-      loadDashboard(app).then(
+      loadDashboard(app, activityFolder).then(
         loaded => {
           dashboard = loaded;
           loadError = undefined;
@@ -35,7 +38,7 @@
     return () => app.metadataCache.offref(reference);
   });
 
-  const openNote = (notePath: string) => void app.workspace.openLinkText(notePath, sourcePath, false);
+  const openNote = (notePath: string) => void app.workspace.openLinkText(notePath, NO_SOURCE_NOTE, "tab");
 </script>
 
 <Theme>

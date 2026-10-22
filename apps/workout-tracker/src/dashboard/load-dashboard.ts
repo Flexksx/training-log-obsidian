@@ -4,7 +4,7 @@ import type { Visit } from "activity/visit";
 import type { App } from "obsidian";
 import { type ExerciseProgress, exerciseProgress } from "workout/progress";
 import type { Workout } from "workout/session";
-import { loadDailyTasks, loadVisits, loadWorkoutsNewestFirst } from "../notes.ts";
+import { loadVisits, loadWorkoutsNewestFirst } from "../notes.ts";
 
 export type Dashboard = {
   today: IsoDate;
@@ -14,15 +14,15 @@ export type Dashboard = {
   progress: ExerciseProgress[];
 };
 
-export const loadDashboard = async (app: App): Promise<Dashboard> => {
+export const loadDashboard = async (app: App, activityFolder: string): Promise<Dashboard> => {
   const today = toIsoDate(new Date());
-  const visits = loadVisits(app);
-  const [workouts, tasks] = await Promise.all([loadWorkoutsNewestFirst(app), loadDailyTasks(app)]);
+  const visits = loadVisits(app, activityFolder);
+  const workouts = await loadWorkoutsNewestFirst(app, activityFolder);
   return {
     today,
     visits,
     workouts,
-    days: buildActivityDays(tasks, visits, today),
+    days: buildActivityDays(visits, today),
     progress: exerciseProgress(workouts),
   };
 };

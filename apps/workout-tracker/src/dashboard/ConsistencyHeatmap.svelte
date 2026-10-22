@@ -14,7 +14,6 @@
   const LEGEND_ENTRIES = [
     ...ACTIVITIES.map(activity => ({ variant: SERIES_OF_ACTIVITY[activity.key], label: activity.label })),
     { variant: "mixed", label: "Both" },
-    { variant: "missed", label: "Planned, missed" },
   ] as const;
 
   const labels = $derived(monthLabels(today, weekCount));
