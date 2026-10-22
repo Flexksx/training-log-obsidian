@@ -57,7 +57,7 @@ The plugin build writes `main.js`, `manifest.json` and `styles.css` to
 `OBSIDIAN_PLUGIN_DIR`:
 
 ```bash
-OBSIDIAN_PLUGIN_DIR="$HOME/Obsidian/obsidian-vault/.obsidian/plugins/workout-tracker" just build workout-tracker
+OBSIDIAN_PLUGIN_DIR="$HOME/Obsidian/obsidian-vault/.obsidian/plugins/training-log" just build workout-tracker
 ```
 
 Then reload the plugin in Obsidian.

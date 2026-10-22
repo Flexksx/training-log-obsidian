@@ -1,6 +1,6 @@
 {
-  "id": "workout-tracker",
-  "name": "Workout Tracker",
+  "id": "training-log",
+  "name": "Training Log",
   "version": "0.1.0",
   "minAppVersion": "1.5.0",
   "description": "Log gym sets inside a note and see consistency and progress on a dashboard.",

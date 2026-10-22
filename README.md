@@ -1,1 +1,1 @@
-# obsidian-workout-tracker
+# training-log-obsidian

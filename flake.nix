@@ -1,5 +1,5 @@
 {
-  description = "obsidian-workout-tracker";
+  description = "training-log-obsidian";
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
