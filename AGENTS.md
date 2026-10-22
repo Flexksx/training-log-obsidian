@@ -54,13 +54,14 @@ Every developer action uses `just`. `just` sends the work to `moon`.
 - `just publish` builds the plugin into your vault.
 
 The plugin build writes `main.js`, `manifest.json` and `styles.css` to
-`apps/workout-tracker/dist`. `just publish` writes them to the folder in
-`OBSIDIAN_PLUGIN_DIR` instead, and fails if the variable is unset. It skips the
-build cache, so it rewrites the files even after Obsidian replaced them with a
-release. Point the variable at the `training-log` plugin folder of the vault:
+`apps/workout-tracker/dist`. `just publish` writes them to
+`$OBSIDIAN_VAULT/.obsidian/plugins/<id>` instead, with the id from the root
+`manifest.json`, and fails if `OBSIDIAN_VAULT` is unset. It skips the build
+cache, so it rewrites the files even after Obsidian replaced them with a
+release:
 
 ```bash
-export OBSIDIAN_PLUGIN_DIR="$HOME/Obsidian/obsidian-vault/.obsidian/plugins/training-log"
+export OBSIDIAN_VAULT="$HOME/Obsidian/obsidian-vault"
 just publish
 ```
 
