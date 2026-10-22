@@ -1,0 +1,49 @@
+{
+  "languages": {
+    "TypeScript": {
+      "language_servers": ["tsgo", "biome", "eslint"],
+      "formatter": { "language_server": { "name": "biome" } },
+      "code_actions_on_format": {
+        "source.fixAll.biome": true,
+        "source.organizeImports.biome": true
+      }
+    },
+    "JavaScript": {
+      "language_servers": ["tsgo", "biome", "eslint"],
+      "formatter": { "language_server": { "name": "biome" } },
+      "code_actions_on_format": {
+        "source.fixAll.biome": true,
+        "source.organizeImports.biome": true
+      }
+    },
+    "Svelte": {
+      "language_servers": ["svelte-language-server", "biome", "eslint"],
+      "formatter": { "language_server": { "name": "biome" } },
+      "code_actions_on_format": {
+        "source.fixAll.biome": true,
+        "source.organizeImports.biome": true,
+        "source.fixAll.eslint": true
+      }
+    },
+    "CSS": {
+      "formatter": { "language_server": { "name": "biome" } },
+      "code_actions_on_format": {
+        "source.fixAll.biome": true
+      }
+    },
+    "JSON": {
+      "formatter": { "language_server": { "name": "biome" } }
+    },
+    "JSONC": {
+      "formatter": { "language_server": { "name": "biome" } }
+    },
+    "Nix": {
+      "formatter": { "external": { "command": "alejandra", "arguments": ["--quiet", "-"] } }
+    },
+    "Markdown": {
+      "formatter": {
+        "external": { "command": "rumdl", "arguments": ["fmt", "--stdin", "--stdin-filename", "{buffer_path}"] }
+      }
+    }
+  }
+}

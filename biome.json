@@ -4,6 +4,5 @@
   "formatter": { "indentStyle": "space", "lineWidth": 120 },
   "javascript": { "formatter": { "arrowParentheses": "asNeeded" } },
   "html": { "experimentalFullSupportEnabled": true },
-  "linter": { "rules": { "recommended": true } },
   "assist": { "actions": { "source": { "organizeImports": "on" } } }
 }
