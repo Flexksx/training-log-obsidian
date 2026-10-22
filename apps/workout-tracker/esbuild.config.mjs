@@ -25,7 +25,7 @@ const options = {
 };
 
 await mkdir(outputDirectory, { recursive: true });
-await copyFile("manifest.json", `${outputDirectory}/manifest.json`);
+await copyFile("../../manifest.json", `${outputDirectory}/manifest.json`);
 
 if (process.argv.includes("--watch")) await (await esbuild.context(options)).watch();
 else await esbuild.build(options);
