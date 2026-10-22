@@ -13,6 +13,7 @@ import WorkoutDashboard from "./dashboard/WorkoutDashboard.svelte";
 import ErrorMessage from "./ErrorMessage.svelte";
 import ExerciseLogger from "./exercise-logger/ExerciseLogger.svelte";
 import { ExerciseLoggerState } from "./exercise-logger/exercise-logger-state.svelte.ts";
+import { WORKOUT_LOGGER_BLOCK } from "./notes.ts";
 import { type SettingsData, TrainingLogSettings } from "./settings.svelte.ts";
 
 const DASHBOARD_VIEW_TYPE = "training-log-dashboard";
@@ -97,7 +98,7 @@ export default class WorkoutTrackerPlugin extends Plugin {
     this.addSettingTab(new TrainingLogSettingTab(this, settings));
     this.registerView(DASHBOARD_VIEW_TYPE, leaf => new DashboardView(leaf, settings));
     this.addRibbonIcon(DASHBOARD_ICON, OPEN_DASHBOARD_LABEL, () => void this.#openDashboard());
-    this.registerMarkdownCodeBlockProcessor("workout-logger", (_source, element, context) => {
+    this.registerMarkdownCodeBlockProcessor(WORKOUT_LOGGER_BLOCK, (_source, element, context) => {
       const file = this.app.vault.getAbstractFileByPath(context.sourcePath);
       if (!(file instanceof TFile)) {
         mountView(ErrorMessage, { message: `Exercise logger: cannot find ${context.sourcePath}` }, element, context);

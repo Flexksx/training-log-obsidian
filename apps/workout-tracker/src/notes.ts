@@ -6,6 +6,11 @@ import { parseSession, type Workout } from "workout/session";
 
 const ISO_DATE_LENGTH = 10;
 const MARKDOWN_EXTENSION = "md";
+const WORKOUT_NOTE_TITLE = "Workout";
+const FRONTMATTER_FENCE = "---";
+const CODE_FENCE = "```";
+
+export const WORKOUT_LOGGER_BLOCK = "workout-logger";
 
 export class ActivityFolderNotFoundError extends Error {
   constructor(folderPath: string) {
@@ -68,3 +73,22 @@ export const loadWorkoutsNewestFirst = async (app: App, activityFolder: string):
   );
   return workouts.toSorted((a, b) => b.date.localeCompare(a.date));
 };
+
+const workoutNoteText = (date: IsoDate): string =>
+  [
+    FRONTMATTER_FENCE,
+    `type: ${GYM.noteType}`,
+    `date: ${date}`,
+    "duration:",
+    "kcal:",
+    FRONTMATTER_FENCE,
+    `${CODE_FENCE}${WORKOUT_LOGGER_BLOCK}`,
+    CODE_FENCE,
+    "",
+  ].join("\n");
+
+export const createWorkoutNote = (app: App, activityFolder: string, date: IsoDate): Promise<TFile> =>
+  app.vault.create(
+    normalizePath(`${activityFolder}/${date} ${WORKOUT_NOTE_TITLE}.${MARKDOWN_EXTENSION}`),
+    workoutNoteText(date),
+  );

@@ -12,6 +12,7 @@ export type Dashboard = {
   workouts: Workout[];
   days: ActivityDays;
   progress: ExerciseProgress[];
+  todaysWorkout: Workout | undefined;
 };
 
 export const loadDashboard = async (app: App, activityFolder: string): Promise<Dashboard> => {
@@ -24,5 +25,6 @@ export const loadDashboard = async (app: App, activityFolder: string): Promise<D
     workouts,
     days: buildActivityDays(visits, today),
     progress: exerciseProgress(workouts),
+    todaysWorkout: workouts.find(workout => workout.date === today),
   };
 };

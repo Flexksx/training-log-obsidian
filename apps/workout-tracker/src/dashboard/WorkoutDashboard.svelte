@@ -1,7 +1,10 @@
 <script lang="ts">
+  import type { IsoDate } from "activity/iso-date";
+  import Button from "design-system/Button";
   import Text from "design-system/Text";
   import Theme from "design-system/Theme";
-  import { type App, debounce, Platform } from "obsidian";
+  import { type App, debounce, Notice, Platform } from "obsidian";
+  import { createWorkoutNote } from "../notes.ts";
   import type { TrainingLogSettings } from "../settings.svelte.ts";
   import ConsistencyHeatmap from "./ConsistencyHeatmap.svelte";
   import ExerciseProgressList from "./ExerciseProgressList.svelte";
@@ -39,6 +42,12 @@
   });
 
   const openNote = (notePath: string) => void app.workspace.openLinkText(notePath, NO_SOURCE_NOTE, "tab");
+
+  const startWorkout = (today: IsoDate) =>
+    void createWorkoutNote(app, settings.activityFolder, today).then(
+      note => app.workspace.getLeaf("tab").openFile(note),
+      (error: Error) => new Notice(`Training Log: ${error.message}`),
+    );
 </script>
 
 <Theme>
@@ -46,6 +55,13 @@
     <Text variant="error">Workout dashboard error: {loadError.message}</Text>
   {:else if dashboard}
     <div class="dashboard">
+      {#if dashboard.todaysWorkout}
+        {@const notePath = dashboard.todaysWorkout.notePath}
+        <Button variant="primary" onclick={() => openNote(notePath)}>Open today's workout</Button>
+      {:else}
+        {@const today = dashboard.today}
+        <Button variant="primary" onclick={() => startWorkout(today)}>Start today's workout</Button>
+      {/if}
       <SummaryTiles days={dashboard.days} today={dashboard.today} visits={dashboard.visits} />
       <ConsistencyHeatmap
         days={dashboard.days}
