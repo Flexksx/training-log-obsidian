@@ -1,7 +1,3 @@
-/* All values come from Obsidian theme tokens, so the panel follows the
-   active theme. Only the control height is local: desktop scales the
-   theme's input height, mobile uses a 48px touch target. */
-
 .wl {
   --wl-control: calc(var(--input-height) * 1.3);
   display: flex; flex-direction: column; gap: var(--size-4-2);
@@ -89,13 +85,10 @@
 .wl-chip-group { font-size: var(--font-ui-smaller); color: var(--text-faint); }
 .wl .wl-chip.mod-cta .wl-chip-group { color: inherit; }
 
-/* Hide the desktop spin arrows. The − / + buttons do that job. */
 .wl-step-row input::-webkit-outer-spin-button,
 .wl-step-row input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 .wl-step-row input { -moz-appearance: textfield; }
 
-/* Wide screens: reps, kg and the log button on one line.
-   Container queries cannot read CSS variables, so the width is a number. */
 @container (min-width: 520px) {
   .wl-entry { grid-template-columns: 1fr 1fr auto; align-items: end; }
   .wl-entry.is-single { grid-template-columns: 1fr auto; }
@@ -103,7 +96,6 @@
   .wl .wl-add-btn { width: auto; align-self: flex-start; padding: 0 var(--size-4-5); }
 }
 
-/* Mobile: fixed sizes. Theme tokens looked wrong on phones. */
 .is-mobile .wl { gap: 10px; margin: 4px 0 16px; }
 .is-mobile .wl-card { border-width: 1px; border-radius: 12px; }
 .is-mobile .wl-head { gap: 12px; padding: 12px 14px; min-height: 48px; }
@@ -127,10 +119,6 @@
 .is-mobile .wl .wl-chip { gap: 6px; border-radius: 999px; padding: 6px 14px; min-height: 36px; }
 .is-mobile .wl-chip-group { font-size: 0.75em; }
 
-/* Layout and text use Obsidian theme tokens, so the dashboard follows the
-   active theme. Only the two activity colors are local. They are checked
-   for colorblind contrast in each mode, so change them as a pair. */
-
 .wd {
   --wd-gym: #2f9e4f;
   --wd-capoeira: #7c5cd6;
@@ -147,8 +135,6 @@
 .wd-section { display: flex; flex-direction: column; gap: var(--size-4-3); }
 .wd-section-head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--size-4-3); flex-wrap: wrap; }
 .wd-note { color: var(--text-faint); font-size: var(--font-ui-smaller); }
-
-/* ---- Tiles ---- */
 
 .wd-tiles { display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--size-4-2); }
 @container (min-width: 620px) { .wd-tiles { grid-template-columns: repeat(4, 1fr); } }
@@ -169,8 +155,6 @@
 .wd-pips { display: flex; gap: 4px; }
 .wd-pips span { flex: 1; height: 4px; border-radius: 2px; background: var(--wd-empty); }
 .wd-pips span.is-on { background: var(--text-normal); }
-
-/* ---- Heatmap ---- */
 
 .wd-heat {
   display: grid;
@@ -204,8 +188,6 @@
 .wd .wd-key .wd-cell { width: 10px; height: 10px; cursor: default; }
 .wd .wd-key .wd-cell:hover { outline: none; }
 
-/* ---- Muscle balance ---- */
-
 .wd-bars { display: flex; flex-direction: column; gap: 6px; }
 .wd-bar-row { display: grid; grid-template-columns: 5.5em 1fr 2em; align-items: center; gap: var(--size-4-2); font-size: var(--font-ui-small); }
 .wd-bar-name { color: var(--text-muted); }
@@ -219,8 +201,6 @@
 .wd-bar { position: absolute; left: 0; top: 2px; bottom: 2px; border-radius: 0 4px 4px 0; background: var(--wd-gym); min-width: 3px; }
 .wd-bar-value { text-align: right; font-weight: var(--font-semibold); }
 .wd-bar-value.is-none { color: var(--text-faint); font-weight: var(--font-normal); }
-
-/* ---- Exercises ---- */
 
 .wd-group { display: flex; flex-direction: column; }
 .wd-group + .wd-group { margin-top: var(--size-4-3); }
@@ -247,8 +227,6 @@
 
 @container (max-width: 420px) { .wd-spark { display: none; } }
 
-/* ---- Sessions ---- */
-
 .wd-sessions { display: flex; flex-direction: column; }
 .wd .wd-session {
   display: grid; grid-template-columns: 8.5em 1fr; gap: 2px var(--size-4-3);
@@ -260,8 +238,6 @@
 .wd-session-date { font-weight: var(--font-medium); grid-row: span 2; white-space: nowrap; }
 .wd-session-ex { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: var(--font-ui-small); }
 .wd-session-num { color: var(--text-muted); font-size: var(--font-ui-smaller); }
-
-/* ---- Time and calories ---- */
 
 .wd-energy-sum { display: flex; gap: var(--size-4-2) var(--size-4-6); flex-wrap: wrap; font-size: var(--font-ui-small); color: var(--text-muted); }
 .wd-energy-sum b { color: var(--text-normal); font-weight: var(--font-semibold); }

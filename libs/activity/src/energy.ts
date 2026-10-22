@@ -9,7 +9,6 @@ export type WeekEnergy = {
   untimedVisits: number;
 };
 
-/** Time and calories per week, from the first week that has a duration. */
 export const weeklyEnergy = (visits: readonly Visit[], today: IsoDate, weekCount: number): WeekEnergy[] => {
   const firstTimed = visits
     .filter(visit => visit.seconds && visit.date <= today)

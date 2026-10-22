@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
+import { muscleGroupOf } from "../src/catalog.ts";
 import { formatSet, parseSet } from "../src/exercise-set.ts";
 import { exerciseProgress, lastPerformance } from "../src/progress.ts";
 import { mergeCatalog, searchCatalog } from "../src/search.ts";
@@ -80,4 +81,10 @@ test("progress compares estimated one-rep max and finds the last earlier session
   assert.ok((squat?.change ?? 0) > 0);
   assert.equal(lastPerformance(workouts.toReversed(), "Squat", "2026-10-04")?.date, "2026-10-01");
   assert.equal(lastPerformance(workouts.toReversed(), "Squat", "2026-10-01"), undefined);
+});
+
+test("muscle group rules check arms before back, so a triceps pulldown is arms", () => {
+  assert.equal(muscleGroupOf("Cable Triceps Pulldown"), "Arms");
+  assert.equal(muscleGroupOf("Wide Grip Lat Pulldown"), "Back");
+  assert.equal(muscleGroupOf("Triceps Pushdown"), "Arms");
 });

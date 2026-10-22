@@ -1,8 +1,3 @@
-/**
- * A session is the body of a workout note: one "## Exercise" heading per
- * exercise and one list line per set. The note text is the source of truth,
- * so every edit is a pure text transform.
- */
 import { formatSet, parseSet, type ExerciseSet } from "./exercise-set.ts";
 
 export type LoggedSet = ExerciseSet & { line: number };

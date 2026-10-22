@@ -17,13 +17,11 @@ export const MUSCLE_GROUPS = [
 export type MuscleGroup = (typeof MUSCLE_GROUPS)[number];
 export type CatalogEntry = { name: string; group: MuscleGroup; kind?: SetKind };
 
-/** Two names with the same key are the same exercise: "Push-up" and "pushup". */
 export const exerciseKey = (name: string): string => name.toLowerCase().replace(/[^a-z0-9]/g, "");
 
 const CATALOG_BY_KEY = new Map(BUILT_IN_CATALOG.map(entry => [exerciseKey(entry.name), entry]));
 
-/** Rule order matters: "Triceps Pulldown" must hit Arms before "pulldown" hits Back. */
-const GROUP_RULES: readonly (readonly [MuscleGroup, RegExp])[] = [
+const GROUP_RULES_IN_PRIORITY_ORDER: readonly (readonly [MuscleGroup, RegExp])[] = [
   ["Mobility", /\b(stretch(es|ing)?|mobility|foam roll(ing)?|yoga)\b/i],
   ["Core", /\b(abs?|abdominal|crunch|plank|knee raise|leg raise|hanging)\b/i],
   ["Arms", /\b(curls?|biceps?|triceps?|skull)\b/i],
@@ -36,4 +34,4 @@ const GROUP_RULES: readonly (readonly [MuscleGroup, RegExp])[] = [
 export const catalogEntryOf = (name: string): CatalogEntry | undefined => CATALOG_BY_KEY.get(exerciseKey(name));
 
 export const muscleGroupOf = (name: string): MuscleGroup =>
-  catalogEntryOf(name)?.group ?? GROUP_RULES.find(([, pattern]) => pattern.test(name))?.[0] ?? "Other";
+  catalogEntryOf(name)?.group ?? GROUP_RULES_IN_PRIORITY_ORDER.find(([, pattern]) => pattern.test(name))?.[0] ?? "Other";

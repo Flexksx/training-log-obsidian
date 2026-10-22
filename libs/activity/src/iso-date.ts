@@ -1,4 +1,3 @@
-/** A local calendar day as "YYYY-MM-DD". String order is date order. */
 export type IsoDate = string;
 
 const DAY_MILLISECONDS = 86_400_000;
@@ -26,8 +25,9 @@ export const addDays = (date: IsoDate, days: number): IsoDate => {
 export const daysBetween = (from: IsoDate, to: IsoDate): number =>
   Math.round((fromIsoDate(to).getTime() - fromIsoDate(from).getTime()) / DAY_MILLISECONDS);
 
-/** Weeks start on Monday. */
-export const weekStart = (date: IsoDate): IsoDate => addDays(date, -((fromIsoDate(date).getDay() + 6) % DAYS_PER_WEEK));
+const daysSinceMonday = (date: IsoDate): number => (fromIsoDate(date).getDay() + DAYS_PER_WEEK - 1) % DAYS_PER_WEEK;
+
+export const weekStart = (date: IsoDate): IsoDate => addDays(date, -daysSinceMonday(date));
 
 export const addWeeks = (date: IsoDate, weeks: number): IsoDate => addDays(date, weeks * DAYS_PER_WEEK);
 

@@ -1,7 +1,3 @@
-/**
- * A draft is the set the stepper fields show before it is logged. It keeps
- * every field, so switching kind and back does not lose the numbers.
- */
 import { catalogEntryOf } from "workout/catalog";
 import { joinMinutes, splitMinutes, type ExerciseSet, type SetKind } from "workout/exercise-set";
 
@@ -50,7 +46,6 @@ const draftFieldsOf = (set: ExerciseSet): Partial<Draft> => {
   }
 };
 
-/** Seed order: last set today, first set last time, catalog kind, defaults. */
 export const seedDraft = (exerciseName: string, lastSetToday?: ExerciseSet, firstSetLastTime?: ExerciseSet): Draft => {
   const seed = lastSetToday ?? firstSetLastTime;
   const kind = catalogEntryOf(exerciseName)?.kind;

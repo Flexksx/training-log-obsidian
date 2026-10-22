@@ -1,8 +1,3 @@
-/**
- * UI state for one workout note. Obsidian re-creates a code block when the
- * note re-renders, so the state lives here, keyed by note path, and
- * outlives each mounted view.
- */
 import type { Draft } from "./draft.ts";
 
 export class LoggerState {

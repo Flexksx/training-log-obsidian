@@ -31,7 +31,6 @@
 
   const firstWeek = $derived(addWeeks(weekStart(today), -(weekCount - 1)));
 
-  /** A month label sits on the first week of a new month. The first column gets one only when the next month is 3+ weeks away. */
   const monthLabels = $derived(
     Array.from({ length: weekCount }, (_, week) => {
       const date = addWeeks(firstWeek, week);

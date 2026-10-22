@@ -1,7 +1,3 @@
-/**
- * Reads the vault into plain data for the domain libs.
- * Notes stay the source of truth: nothing here caches or writes.
- */
 import type { App, FrontMatterCache, TFile } from "obsidian";
 import { activityOfNoteType, GYM } from "activity/activities";
 import type { PlannedTask } from "activity/consistency";

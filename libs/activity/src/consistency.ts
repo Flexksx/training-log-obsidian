@@ -1,8 +1,3 @@
-/**
- * Merges daily-note tasks and activity notes into one map of days.
- * A task marked [x] is done and [-] is missed. Any other task on a past day
- * is missed. An activity note on a day makes that activity done.
- */
 import { ACTIVITIES, activityOfTask, type ActivityKey } from "./activities.ts";
 import { addDays, addWeeks, weekEnd, weekStart, type IsoDate } from "./iso-date.ts";
 import type { Visit } from "./visit.ts";
@@ -50,10 +45,6 @@ export const countByActivity = (days: ActivityDays, from: IsoDate, to: IsoDate):
   ) as Record<ActivityKey, number>;
 };
 
-/**
- * Consecutive weeks at target, ending at the last full week.
- * The current week adds one only when it already hit the target.
- */
 export const weekStreaks = (days: ActivityDays, today: IsoDate): { current: number; best: number } => {
   const thisWeek = weekStart(today);
   const first = [...days.keys()].sort()[0];

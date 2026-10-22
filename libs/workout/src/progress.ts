@@ -2,7 +2,6 @@ import { exerciseKey, muscleGroupOf, type MuscleGroup } from "./catalog.ts";
 import type { ExerciseSet, SetKind } from "./exercise-set.ts";
 import type { Session, Workout } from "./session.ts";
 
-/** One exercise in one workout, reduced to one comparable number. */
 export type Effort = {
   date: string;
   notePath: string;
@@ -23,7 +22,6 @@ export type ExerciseProgress = {
 
 export type VolumeStatus = "none" | "under" | "in" | "over";
 
-/** Weekly hard sets per muscle that most hypertrophy guidance aims for. */
 export const WEEKLY_SET_RANGE = { minimum: 10, maximum: 20 } as const;
 export const VOLUME_DAYS = 7;
 export const MUSCLE_GROUPS_FOR_VOLUME: readonly MuscleGroup[] = ["Chest", "Back", "Shoulders", "Legs", "Arms", "Core"];
@@ -32,7 +30,6 @@ const NOT_MUSCLE: ReadonlySet<MuscleGroup> = new Set(["Mobility", "Cardio"]);
 const EPLEY_REPS_DIVISOR = 30;
 const KILOGRAMS_WEIGHT_OVER_REPS = 1000;
 
-/** Epley estimate of a one-rep max. It makes sets with different reps comparable. */
 export const estimatedOneRepMax = (reps: number, kilograms: number): number =>
   reps === 1 ? kilograms : kilograms * (1 + reps / EPLEY_REPS_DIVISOR);
 
@@ -135,7 +132,6 @@ export const workoutTotals = (session: Session) => {
   };
 };
 
-/** The most recent earlier workout that logged sets for this exercise. */
 export const lastPerformance = (
   workoutsNewestFirst: readonly Workout[],
   exerciseName: string,

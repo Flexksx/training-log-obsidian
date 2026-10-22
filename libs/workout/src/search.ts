@@ -1,9 +1,3 @@
-/**
- * Fuzzy search over the built-in catalog plus the names from past sessions.
- * A query matches when every word is a subsequence of the name.
- * Consecutive letters and word starts score higher, so "inc db" finds
- * "Incline Dumbbell Press".
- */
 import { BUILT_IN_CATALOG } from "./built-in-catalog.ts";
 import { exerciseKey, muscleGroupOf, type CatalogEntry } from "./catalog.ts";
 
@@ -19,7 +13,6 @@ const MIN_SCORE_PER_LETTER = 2;
 const LENGTH_PENALTY = 0.01;
 const WORD_SEPARATORS = " -(";
 
-/** A past-session spelling replaces the catalog one, so stats keep one name per exercise. */
 export const mergeCatalog = (recentNames: readonly string[]): SearchEntry[] => {
   const byKey = new Map<string, SearchEntry>(BUILT_IN_CATALOG.map(entry => [exerciseKey(entry.name), entry]));
   recentNames.forEach((name, recentRank) => {
@@ -50,7 +43,6 @@ const scoreFrom = (token: string, target: string, start: number): number | undef
   return score;
 };
 
-/** Scattered matches score under two points per letter and count as no match. */
 const scoreToken = (token: string, target: string): number | undefined => {
   const starts = [...target].flatMap((letter, index) => (letter === token[0] ? [index] : []));
   const best = Math.max(-1, ...starts.map(start => scoreFrom(token, target, start) ?? -1));
