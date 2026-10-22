@@ -1,8 +1,8 @@
 <script lang="ts">
-  import { debounce, Platform, type App } from "obsidian";
+  import { type App, debounce, Platform } from "obsidian";
   import ConsistencyHeatmap from "./ConsistencyHeatmap.svelte";
   import ExerciseProgressList from "./ExerciseProgressList.svelte";
-  import { loadDashboard, type Dashboard } from "./load-dashboard.ts";
+  import { type Dashboard, loadDashboard } from "./load-dashboard.ts";
   import MuscleVolume from "./MuscleVolume.svelte";
   import RecentSessions from "./RecentSessions.svelte";
   import SummaryTiles from "./SummaryTiles.svelte";

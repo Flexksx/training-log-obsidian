@@ -1,4 +1,4 @@
-import { exerciseKey, muscleGroupOf, type MuscleGroup } from "./catalog.ts";
+import { exerciseKey, type MuscleGroup, muscleGroupOf } from "./catalog.ts";
 import type { ExerciseSet, SetKind } from "./exercise-set.ts";
 import type { Session, Workout } from "./session.ts";
 
@@ -35,7 +35,7 @@ export const estimatedOneRepMax = (reps: number, kilograms: number): number =>
 
 const dominantKind = (sets: readonly ExerciseSet[]): SetKind => {
   const counts = new Map<SetKind, number>();
-  sets.forEach(set => counts.set(set.kind, (counts.get(set.kind) ?? 0) + 1));
+  for (const set of sets) counts.set(set.kind, (counts.get(set.kind) ?? 0) + 1);
   return [...counts].toSorted((a, b) => b[1] - a[1])[0]?.[0] ?? "weight";
 };
 
@@ -65,34 +65,33 @@ type Run = { date: string; notePath: string; sets: readonly ExerciseSet[] };
 
 export const exerciseProgress = (workouts: readonly Workout[]): ExerciseProgress[] => {
   const runsByKey = new Map<string, { name: string; runs: Run[] }>();
-  workouts
-    .toSorted((a, b) => a.date.localeCompare(b.date))
-    .forEach(({ date, notePath, session }) =>
-      session.exercises
-        .filter(exercise => exercise.sets.length)
-        .forEach(exercise => {
-          const key = exerciseKey(exercise.name);
-          const entry = runsByKey.get(key) ?? { name: exercise.name, runs: [] };
-          entry.runs.push({ date, notePath, sets: exercise.sets });
-          runsByKey.set(key, entry);
-        }),
-    );
-  return [...runsByKey.values()].map(({ name, runs }) => {
+  for (const { date, notePath, session } of workouts.toSorted((a, b) => a.date.localeCompare(b.date))) {
+    for (const exercise of session.exercises.filter(candidate => candidate.sets.length)) {
+      const key = exerciseKey(exercise.name);
+      const entry = runsByKey.get(key) ?? { name: exercise.name, runs: [] };
+      entry.runs.push({ date, notePath, sets: exercise.sets });
+      runsByKey.set(key, entry);
+    }
+  }
+  return [...runsByKey.values()].flatMap(({ name, runs }) => {
     const kind = dominantKind(runs.flatMap(run => run.sets));
     const efforts = runs
       .filter(run => run.sets.some(set => set.kind === kind))
       .map(run => ({ ...run, ...effortOf(kind, run.sets) }));
-    const last = efforts.at(-1)!;
+    const last = efforts.at(-1);
+    if (!last) return [];
     const previous = efforts.at(-2);
-    return {
-      name,
-      kind,
-      group: muscleGroupOf(name),
-      efforts,
-      last,
-      best: Math.max(...efforts.map(effort => effort.value)),
-      change: previous?.value ? (last.value - previous.value) / previous.value : undefined,
-    };
+    return [
+      {
+        name,
+        kind,
+        group: muscleGroupOf(name),
+        efforts,
+        last,
+        best: Math.max(...efforts.map(effort => effort.value)),
+        change: previous?.value ? (last.value - previous.value) / previous.value : undefined,
+      },
+    ];
   });
 };
 

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { ACTIVITIES } from "activity/activities";
-  import { totalSeconds, weeklyEnergy, type WeekEnergy } from "activity/energy";
+  import { totalSeconds, type WeekEnergy, weeklyEnergy } from "activity/energy";
   import type { IsoDate } from "activity/iso-date";
   import type { Visit } from "activity/visit";
   import { formatCount, formatDayMonth, formatHours, pluralize } from "../format.ts";

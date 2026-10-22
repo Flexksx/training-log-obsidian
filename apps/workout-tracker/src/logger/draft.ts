@@ -1,5 +1,5 @@
 import { catalogEntryOf } from "workout/catalog";
-import { joinMinutes, splitMinutes, type ExerciseSet, type SetKind } from "workout/exercise-set";
+import { type ExerciseSet, joinMinutes, type SetKind, splitMinutes } from "workout/exercise-set";
 
 export type Draft = {
   kind: SetKind;

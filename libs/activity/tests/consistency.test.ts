@@ -42,6 +42,12 @@ test("durations read the Strava format and plain minutes", () => {
   assert.equal(parseDuration("53m 30s"), 3210);
   assert.equal(parseDuration(45), 2700);
   assert.equal(parseDuration(""), undefined);
-  const weeks = weeklyEnergy([{ date: "2026-10-20", activity: "gym", notePath: "w.md", seconds: 3600, kilocalories: 500 }], TODAY, 8);
-  assert.deepEqual(weeks, [{ weekStart: "2026-10-19", seconds: { gym: 3600, capoeira: 0 }, kilocalories: 500, untimedVisits: 0 }]);
+  const weeks = weeklyEnergy(
+    [{ date: "2026-10-20", activity: "gym", notePath: "w.md", seconds: 3600, kilocalories: 500 }],
+    TODAY,
+    8,
+  );
+  assert.deepEqual(weeks, [
+    { weekStart: "2026-10-19", seconds: { gym: 3600, capoeira: 0 }, kilocalories: 500, untimedVisits: 0 },
+  ]);
 });

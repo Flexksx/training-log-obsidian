@@ -1,4 +1,4 @@
-import { formatSet, parseSet, type ExerciseSet } from "./exercise-set.ts";
+import { type ExerciseSet, formatSet, parseSet } from "./exercise-set.ts";
 
 export type LoggedSet = ExerciseSet & { line: number };
 export type Exercise = { name: string; sets: LoggedSet[]; lastLine: number };
@@ -52,7 +52,10 @@ const insertLine = (text: string, index: number, line: string): string => {
 };
 
 const removeLine = (text: string, index: number): string =>
-  text.split("\n").filter((_, lineIndex) => lineIndex !== index).join("\n");
+  text
+    .split("\n")
+    .filter((_, lineIndex) => lineIndex !== index)
+    .join("\n");
 
 export const appendSet = (text: string, exerciseName: string, set: ExerciseSet): string =>
   insertLine(text, requireExercise(text, exerciseName).lastLine + 1, `- ${formatSet(set)}`);

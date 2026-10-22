@@ -1,14 +1,14 @@
 <script lang="ts">
-  import { ACTIVITIES, activityLabel, type ActivityKey } from "activity/activities";
+  import { ACTIVITIES, type ActivityKey, activityLabel } from "activity/activities";
   import {
+    type ActivityDays,
     countActivities,
     countByActivity,
     lastActivity,
-    weekStreaks,
     WEEKLY_TARGET,
-    type ActivityDays,
+    weekStreaks,
   } from "activity/consistency";
-  import { addDays, addWeeks, weekStart, type IsoDate } from "activity/iso-date";
+  import { addDays, addWeeks, type IsoDate, weekStart } from "activity/iso-date";
   import type { Visit } from "activity/visit";
   import { formatDate, formatHours, formatRelativeDay, pluralize } from "../format.ts";
 
@@ -37,7 +37,7 @@
     <div class="wd-tile-name">This week</div>
     <div class="wd-tile-value"><span>{thisWeek}<small> / {WEEKLY_TARGET}</small></span></div>
     <div class="wd-pips" aria-hidden="true">
-      {#each pips as isOn}<span class:is-on={isOn}></span>{/each}
+      {#each pips as isOn, index (index)}<span class:is-on={isOn}></span>{/each}
     </div>
     <div class="wd-tile-sub">{remaining ? `${pluralize(remaining, "session")} to go` : "Target hit"}</div>
   </div>

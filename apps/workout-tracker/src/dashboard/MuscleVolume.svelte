@@ -1,12 +1,12 @@
 <script lang="ts">
   import { addDays, type IsoDate } from "activity/iso-date";
   import {
+    type ExerciseProgress,
     setsPerMuscleGroup,
     VOLUME_DAYS,
     volumeGroups,
     volumeStatus,
     WEEKLY_SET_RANGE,
-    type ExerciseProgress,
   } from "workout/progress";
   import { pluralize } from "../format.ts";
   import DashboardSection from "./DashboardSection.svelte";

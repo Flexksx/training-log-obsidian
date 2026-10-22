@@ -12,8 +12,8 @@
 <div class="wl-step">
   <label for={id}>{label}</label>
   <div class="wl-step-row">
-    <button class="wl-step-btn" aria-label="Decrease {label}" onclick={() => nudge(-step)}>−</button>
+    <button type="button" class="wl-step-btn" aria-label="Decrease {label}" onclick={() => nudge(-step)}>−</button>
     <input {id} type="number" inputmode="decimal" step="any" bind:value />
-    <button class="wl-step-btn" aria-label="Increase {label}" onclick={() => nudge(step)}>+</button>
+    <button type="button" class="wl-step-btn" aria-label="Increase {label}" onclick={() => nudge(step)}>+</button>
   </div>
 </div>

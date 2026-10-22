@@ -11,6 +11,8 @@ fileGroups:
     - '*.json'
     - '*.config.js'
     - '*.config.ts'
+    - '/biome.json'
+    - '/tsconfig.base.json'
   tests:
     - 'tests/**/*'
 

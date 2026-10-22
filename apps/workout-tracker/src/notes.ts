@@ -1,8 +1,8 @@
-import type { App, FrontMatterCache, TFile } from "obsidian";
 import { activityOfNoteType, GYM } from "activity/activities";
 import type { PlannedTask } from "activity/consistency";
-import { isIsoDate, type IsoDate } from "activity/iso-date";
+import { type IsoDate, isIsoDate } from "activity/iso-date";
 import { parseDuration, parseKilocalories, type Visit } from "activity/visit";
+import type { App, FrontMatterCache, TFile } from "obsidian";
 import { parseSession, type Workout } from "workout/session";
 
 const ACTIVITY_FOLDER = "29 Life/Physical Activity";
@@ -23,7 +23,9 @@ const filesIn = (app: App, folder: string): TFile[] =>
   app.vault.getMarkdownFiles().filter(file => file.path.startsWith(`${folder}/`));
 
 export const noteDate = (app: App, file: TFile): IsoDate => {
-  const candidates = [frontmatterOf(app, file).date, file.basename].map(value => String(value ?? "").slice(0, ISO_DATE_LENGTH));
+  const candidates = [frontmatterOf(app, file).date, file.basename].map(value =>
+    String(value ?? "").slice(0, ISO_DATE_LENGTH),
+  );
   const date = candidates.find(isIsoDate);
   if (!date) throw new NoteDateError(file.path);
   return date;
@@ -58,7 +60,9 @@ export const loadWorkoutsNewestFirst = async (app: App): Promise<Workout[]> => {
 };
 
 export const loadDailyTasks = async (app: App): Promise<PlannedTask[]> => {
-  const dailyNotes = filesIn(app, DAILY_NOTES_FOLDER).filter(file => isIsoDate(file.basename.slice(0, ISO_DATE_LENGTH)));
+  const dailyNotes = filesIn(app, DAILY_NOTES_FOLDER).filter(file =>
+    isIsoDate(file.basename.slice(0, ISO_DATE_LENGTH)),
+  );
   const perNote = await Promise.all(
     dailyNotes.map(async file => {
       const taskItems = app.metadataCache.getFileCache(file)?.listItems?.filter(item => item.task !== undefined) ?? [];

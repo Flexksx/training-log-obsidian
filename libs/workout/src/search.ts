@@ -1,5 +1,5 @@
 import { BUILT_IN_CATALOG } from "./built-in-catalog.ts";
-import { exerciseKey, muscleGroupOf, type CatalogEntry } from "./catalog.ts";
+import { type CatalogEntry, exerciseKey, muscleGroupOf } from "./catalog.ts";
 
 export type SearchEntry = CatalogEntry & { recentRank?: number };
 
@@ -36,7 +36,8 @@ const scoreFrom = (token: string, target: string, start: number): number | undef
   for (const letter of token) {
     const index = target.indexOf(letter, from);
     if (index < 0) return undefined;
-    score += (index === previous + 1 ? CONSECUTIVE_SCORE : LETTER_SCORE) + (isWordStart(target, index) ? WORD_START_BONUS : 0);
+    score +=
+      (index === previous + 1 ? CONSECUTIVE_SCORE : LETTER_SCORE) + (isWordStart(target, index) ? WORD_START_BONUS : 0);
     from = index + 1;
     previous = index;
   }
@@ -51,7 +52,9 @@ const scoreToken = (token: string, target: string): number | undefined => {
 
 const fuzzyScore = (query: string, name: string): number | undefined => {
   const target = searchText(name);
-  const scores = searchText(query).split(" ").map(token => scoreToken(token, target));
+  const scores = searchText(query)
+    .split(" ")
+    .map(token => scoreToken(token, target));
   if (scores.some(score => score === undefined)) return undefined;
   return scores.reduce<number>((total, score) => total + (score ?? 0), 0) - target.length * LENGTH_PENALTY;
 };

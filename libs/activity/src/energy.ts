@@ -1,5 +1,5 @@
 import { ACTIVITIES, type ActivityKey } from "./activities.ts";
-import { addWeeks, weekStart, type IsoDate } from "./iso-date.ts";
+import { addWeeks, type IsoDate, weekStart } from "./iso-date.ts";
 import type { Visit } from "./visit.ts";
 
 export type WeekEnergy = {
@@ -23,7 +23,9 @@ export const weeklyEnergy = (visits: readonly Visit[], today: IsoDate, weekCount
       seconds: Object.fromEntries(
         ACTIVITIES.map(activity => [
           activity.key,
-          inWeek.filter(visit => visit.activity === activity.key).reduce((total, visit) => total + (visit.seconds ?? 0), 0),
+          inWeek
+            .filter(visit => visit.activity === activity.key)
+            .reduce((total, visit) => total + (visit.seconds ?? 0), 0),
         ]),
       ) as Record<ActivityKey, number>,
       kilocalories: inWeek.reduce((total, visit) => total + (visit.kilocalories ?? 0), 0),

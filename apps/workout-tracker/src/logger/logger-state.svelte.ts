@@ -49,11 +49,3 @@ export class LoggerState {
     this.closeAdd();
   }
 }
-
-const statesByNotePath = new Map<string, LoggerState>();
-
-export const loggerStateFor = (notePath: string): LoggerState => {
-  const state = statesByNotePath.get(notePath) ?? new LoggerState();
-  statesByNotePath.set(notePath, state);
-  return state;
-};

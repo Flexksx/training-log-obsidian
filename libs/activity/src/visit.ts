@@ -19,7 +19,8 @@ export const parseDuration = (value: unknown): number | undefined => {
   const text = String(value).trim();
   if (PLAIN_NUMBER.test(text)) return Number(text) * SECONDS_PER_MINUTE;
   const part = (pattern: RegExp): number => Number(text.match(pattern)?.[1] ?? 0);
-  const seconds = part(/(\d+)\s*h/i) * SECONDS_PER_HOUR + part(/(\d+)\s*m(?!o)/i) * SECONDS_PER_MINUTE + part(/(\d+)\s*s/i);
+  const seconds =
+    part(/(\d+)\s*h/i) * SECONDS_PER_HOUR + part(/(\d+)\s*m(?!o)/i) * SECONDS_PER_MINUTE + part(/(\d+)\s*s/i);
   return seconds || undefined;
 };
 

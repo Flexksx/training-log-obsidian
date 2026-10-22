@@ -28,6 +28,19 @@ truth. The plugin reads them and writes sets back into them.
   `main.js` on both. Branch on `Platform.isMobile` where a view differs.
 - Node and pnpm come from `nix/node.nix`, shared by every TypeScript unit.
 
+## Formatting and linting
+
+- Biome formats and lints every TypeScript, JavaScript, JSON, CSS and Svelte
+  file. The root `biome.json` is its only config.
+- ESLint runs only the `eslint-plugin-svelte` rules, on `.svelte` and
+  `.svelte.ts` files. It holds no style rules, so it never fights Biome.
+- `svelte-check` type-checks the plugin. `tsc` type-checks each lib.
+- Dev tool versions shared by several units live in the pnpm `catalog` in
+  `pnpm-workspace.yaml`. Biome is pinned exactly, because its output changes
+  between versions.
+- pnpm rejects packages younger than its minimum release age. Pick an older
+  version instead of adding an exception.
+
 ## Entry points
 
 Every developer action uses `just`. `just` sends the work to `moon`.

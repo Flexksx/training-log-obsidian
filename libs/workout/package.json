@@ -6,11 +6,13 @@
     "./*": "./src/*.ts"
   },
   "scripts": {
-    "lint": "tsc",
-    "test": "node --test"
+    "lint": "biome ci && tsc",
+    "test": "node --test",
+    "format": "biome check --write"
   },
   "devDependencies": {
+    "@biomejs/biome": "catalog:",
     "@types/node": "^26.6.5",
-    "typescript": "^6.0.3"
+    "typescript": "catalog:"
   }
 }

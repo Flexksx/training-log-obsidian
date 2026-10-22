@@ -34,4 +34,6 @@ const GROUP_RULES_IN_PRIORITY_ORDER: readonly (readonly [MuscleGroup, RegExp])[]
 export const catalogEntryOf = (name: string): CatalogEntry | undefined => CATALOG_BY_KEY.get(exerciseKey(name));
 
 export const muscleGroupOf = (name: string): MuscleGroup =>
-  catalogEntryOf(name)?.group ?? GROUP_RULES_IN_PRIORITY_ORDER.find(([, pattern]) => pattern.test(name))?.[0] ?? "Other";
+  catalogEntryOf(name)?.group ??
+  GROUP_RULES_IN_PRIORITY_ORDER.find(([, pattern]) => pattern.test(name))?.[0] ??
+  "Other";
