@@ -1,25 +1,50 @@
 name: Release
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
+    paths:
+      - 'apps/training-log/**'
+      - 'libs/**'
+      - 'manifest.json'
 
 permissions:
   contents: write
 
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
   release:
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7.0.1
-      - name: Read the version from the manifest
-        run: echo "VERSION=$(jq -r .version manifest.json)" >> "$GITHUB_ENV"
-      - name: Skip when this version is already released
+        with:
+          ref: main
+          fetch-depth: 0
+      - name: Choose the release version
         run: |
-          if gh release view "$VERSION" >/dev/null 2>&1; then
-            echo "SKIP=true" >> "$GITHUB_ENV"
+          VERSION=$(jq -r .version manifest.json)
+          NEXT_VERSION=$(node .github/scripts/next-version.mjs "$VERSION")
+          RELEASES=$(gh release list --limit 1000 --json tagName)
+          if jq -e --arg version "$VERSION" 'any(.[]; .tagName == $version)' <<< "$RELEASES" >/dev/null; then
+            if [[ "$GITHUB_EVENT_NAME" == push ]] && git merge-base --is-ancestor "$GITHUB_SHA" "refs/tags/$VERSION"; then
+              echo "SKIP=true" >> "$GITHUB_ENV"
+              exit 0
+            fi
+            VERSION=$NEXT_VERSION
+            jq --arg version "$VERSION" '.version = $version' manifest.json > manifest.tmp
+            mv manifest.tmp manifest.json
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add manifest.json
+            git commit -m "Release $VERSION"
           fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
         env:
           GH_TOKEN: ${{ github.token }}
       - if: env.SKIP != 'true'
@@ -30,10 +55,13 @@ jobs:
         run: nix develop --command just test all
       - if: env.SKIP != 'true'
         run: nix develop --command just build all
+      - name: Push the version
+        if: env.SKIP != 'true'
+        run: git push origin HEAD:main
       - name: Publish the release
         if: env.SKIP != 'true'
         run: >-
-          gh release create "$VERSION" --target "$GITHUB_SHA" --title "$VERSION" --generate-notes
+          gh release create "$VERSION" --target "$(git rev-parse HEAD)" --title "$VERSION" --generate-notes
           apps/training-log/dist/main.js
           apps/training-log/dist/manifest.json
           apps/training-log/dist/styles.css
