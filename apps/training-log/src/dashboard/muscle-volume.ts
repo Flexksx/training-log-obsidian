@@ -6,7 +6,7 @@ import {
   volumeGroups,
   volumeStatus,
   WEEKLY_SET_RANGE,
-} from "workout/progress";
+} from "workout/application/progress";
 
 const SCALE_HEADROOM_SETS = 5;
 

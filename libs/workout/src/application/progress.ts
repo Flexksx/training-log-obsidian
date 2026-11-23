@@ -1,7 +1,8 @@
-import { exerciseKey, muscleGroupOf } from "./catalog.ts";
-import type { MuscleGroup } from "./catalog-entry.ts";
-import type { ExerciseSet, SetKind } from "./exercise-set.ts";
-import type { Session, Workout } from "./session.ts";
+import { type ExerciseCatalog, exerciseKey, muscleGroupOf } from "../domain/catalog.ts";
+import type { MuscleGroup } from "../domain/catalog-entry.ts";
+import type { ExerciseSet, SetKind } from "../domain/exercise-set.ts";
+import type { Session } from "../domain/session.ts";
+import type { Workout } from "./workout.ts";
 
 export type Effort = {
   date: string;
@@ -64,7 +65,7 @@ const effortOf = (kind: SetKind, sets: readonly ExerciseSet[]): Pick<Effort, "va
 
 type Run = { date: string; notePath: string; sets: readonly ExerciseSet[] };
 
-export const exerciseProgress = (workouts: readonly Workout[]): ExerciseProgress[] => {
+export const exerciseProgress = (catalog: ExerciseCatalog, workouts: readonly Workout[]): ExerciseProgress[] => {
   const runsByKey = new Map<string, { name: string; runs: Run[] }>();
   for (const { date, notePath, session } of workouts.toSorted((a, b) => a.date.localeCompare(b.date))) {
     for (const exercise of session.exercises.filter(candidate => candidate.sets.length)) {
@@ -86,7 +87,7 @@ export const exerciseProgress = (workouts: readonly Workout[]): ExerciseProgress
       {
         name,
         kind,
-        group: muscleGroupOf(name),
+        group: muscleGroupOf(catalog, name),
         efforts,
         last,
         best: Math.max(...efforts.map(effort => effort.value)),

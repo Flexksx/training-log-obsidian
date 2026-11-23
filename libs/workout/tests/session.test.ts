@@ -1,10 +1,17 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { muscleGroupOf } from "../src/catalog.ts";
-import { formatSet, parseSet } from "../src/exercise-set.ts";
-import { exerciseProgress, lastPerformance } from "../src/progress.ts";
-import { mergeCatalog, searchCatalog } from "../src/search.ts";
-import { appendExercise, appendSet, deleteSet, ExerciseNotFoundError, parseSession } from "../src/session.ts";
+import {
+  appendExercise,
+  appendSet,
+  deleteSet,
+  ExerciseNotFoundError,
+  parseSession,
+} from "../src/adapter/markdown-session.ts";
+import { formatSet, parseSet } from "../src/adapter/set-format.ts";
+import { exerciseProgress, lastPerformance } from "../src/application/progress.ts";
+import { mergeCatalog, searchCatalog } from "../src/application/search.ts";
+import { BUILT_IN_CATALOG } from "../src/data/built-in-catalog.ts";
+import { muscleGroupOf } from "../src/domain/catalog.ts";
 
 const NOTE = `---
 type: workout
@@ -44,7 +51,7 @@ test("formatSet output parses back to the same set", () => {
   for (const set of sets) assert.deepEqual(parseSet(`- ${formatSet(set)}`), set);
 });
 
-test("parseSession groups sets under headings and tracks the last content line", () => {
+test("parseSession groups sets under headings", () => {
   const { exercises } = parseSession(NOTE);
   assert.deepEqual(
     exercises.map(exercise => [exercise.name, exercise.sets.length]),
@@ -54,12 +61,11 @@ test("parseSession groups sets under headings and tracks the last content line",
       ["Plank", 2],
     ],
   );
-  assert.equal(NOTE.split("\n")[exercises[1]?.lastLine ?? -1], "felt easy");
 });
 
 test("text edits add and remove lines in place", () => {
   const added = appendSet(NOTE, "Incline Bench Press", { kind: "weight", reps: 6, kilograms: 60 });
-  assert.deepEqual(parseSession(added).exercises[0]?.sets.at(-1), { kind: "weight", reps: 6, kilograms: 60, line: 9 });
+  assert.deepEqual(parseSession(added).exercises[0]?.sets.at(-1), { kind: "weight", reps: 6, kilograms: 60 });
   const removed = deleteSet(added, "Incline Bench Press", 0);
   assert.equal(parseSession(removed).exercises[0]?.sets.length, 2);
   assert.match(appendExercise(NOTE, "Squat"), /- 45 s\n\n## Squat\n$/);
@@ -68,7 +74,7 @@ test("text edits add and remove lines in place", () => {
 });
 
 test("search finds abbreviations and ranks recent names first", () => {
-  const catalog = mergeCatalog(["Incline Bench Press Machine"]);
+  const catalog = mergeCatalog(BUILT_IN_CATALOG, ["Incline Bench Press Machine"]);
   assert.equal(searchCatalog(catalog, "inc db pr", [])[0]?.name, "Incline Dumbbell Press");
   assert.equal(searchCatalog(catalog, "", [])[0]?.name, "Incline Bench Press Machine");
   assert.equal(searchCatalog(catalog, "", ["incline bench press machine"]).length, 8);
@@ -79,7 +85,7 @@ test("progress compares estimated one-rep max and finds the last earlier session
     { date: "2026-10-01", notePath: "a.md", session: parseSession("## Squat\n- 5 reps × 100 kg") },
     { date: "2026-10-04", notePath: "b.md", session: parseSession("## squat\n- 10 reps × 90 kg") },
   ];
-  const [squat] = exerciseProgress(workouts);
+  const [squat] = exerciseProgress(BUILT_IN_CATALOG, workouts);
   assert.equal(squat?.efforts.length, 2);
   assert.equal(squat?.last.notePath, "b.md");
   assert.ok((squat?.change ?? 0) > 0);
@@ -88,7 +94,16 @@ test("progress compares estimated one-rep max and finds the last earlier session
 });
 
 test("muscle group rules check arms before back, so a triceps pulldown is arms", () => {
-  assert.equal(muscleGroupOf("Cable Triceps Pulldown"), "Arms");
-  assert.equal(muscleGroupOf("Wide Grip Lat Pulldown"), "Back");
-  assert.equal(muscleGroupOf("Triceps Pushdown"), "Arms");
+  assert.equal(muscleGroupOf(BUILT_IN_CATALOG, "Cable Triceps Pulldown"), "Arms");
+  assert.equal(muscleGroupOf(BUILT_IN_CATALOG, "Wide Grip Lat Pulldown"), "Back");
+  assert.equal(muscleGroupOf(BUILT_IN_CATALOG, "Triceps Pushdown"), "Arms");
+});
+
+test("catalog inputs control search and progress without changing the defaults", () => {
+  const custom = { entries: [{ name: "Squat", group: "Arms" as const }], groupRules: [] };
+  const workouts = [{ date: "2026-10-01", notePath: "a.md", session: parseSession("## Squat\n- 5 reps × 100 kg") }];
+  assert.equal(mergeCatalog(custom, [])[0]?.group, "Arms");
+  assert.equal(exerciseProgress(custom, workouts)[0]?.group, "Arms");
+  assert.equal(exerciseProgress(BUILT_IN_CATALOG, workouts)[0]?.group, "Legs");
+  assert.equal(muscleGroupOf(custom, "Squat variation"), "Other");
 });

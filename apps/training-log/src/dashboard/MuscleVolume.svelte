@@ -3,7 +3,7 @@
   import RangeBar from "design-system/RangeBar";
   import Section from "design-system/Section";
   import Text from "design-system/Text";
-  import { type ExerciseProgress, VOLUME_DAYS, WEEKLY_SET_RANGE } from "workout/progress";
+  import { type ExerciseProgress, VOLUME_DAYS, WEEKLY_SET_RANGE } from "workout/application/progress";
   import { pluralize } from "../format.ts";
   import { muscleVolume } from "./muscle-volume.ts";
 

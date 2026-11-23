@@ -5,7 +5,7 @@
   import Section from "design-system/Section";
   import Sparkline from "design-system/Sparkline";
   import Text from "design-system/Text";
-  import type { ExerciseProgress } from "workout/progress";
+  import type { ExerciseProgress } from "workout/application/progress";
   import { describeEfforts, describeLastSession, groupByMuscle, metricOf, trendOf } from "./exercise-progress.ts";
   import { interceptLink } from "./open-note.ts";
 

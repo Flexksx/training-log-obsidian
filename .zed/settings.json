@@ -1,7 +1,7 @@
 {
   "languages": {
     "TypeScript": {
-      "language_servers": ["tsgo", "biome", "eslint"],
+      "language_servers": ["typescript-ls", "biome", "eslint"],
       "formatter": { "language_server": { "name": "biome" } },
       "code_actions_on_format": {
         "source.fixAll.biome": true,
@@ -9,7 +9,7 @@
       }
     },
     "JavaScript": {
-      "language_servers": ["tsgo", "biome", "eslint"],
+      "language_servers": ["typescript-ls", "biome", "eslint"],
       "formatter": { "language_server": { "name": "biome" } },
       "code_actions_on_format": {
         "source.fixAll.biome": true,

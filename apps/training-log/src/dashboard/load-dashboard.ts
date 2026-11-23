@@ -2,8 +2,9 @@ import { type ActivityDays, buildActivityDays } from "activity/consistency";
 import { type IsoDate, toIsoDate } from "activity/iso-date";
 import type { Visit } from "activity/visit";
 import type { App } from "obsidian";
-import { type ExerciseProgress, exerciseProgress } from "workout/progress";
-import type { Workout } from "workout/session";
+import { type ExerciseProgress, exerciseProgress } from "workout/application/progress";
+import type { Workout } from "workout/application/workout";
+import { BUILT_IN_CATALOG } from "workout/data/built-in-catalog";
 import { loadVisits, loadWorkoutsNewestFirst } from "../notes.ts";
 
 export type Dashboard = {
@@ -24,7 +25,7 @@ export const loadDashboard = async (app: App, activityFolder: string): Promise<D
     visits,
     workouts,
     days: buildActivityDays(visits, today),
-    progress: exerciseProgress(workouts),
+    progress: exerciseProgress(BUILT_IN_CATALOG, workouts),
     todaysWorkout: workouts.find(workout => workout.date === today),
   };
 };

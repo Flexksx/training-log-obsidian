@@ -1,6 +1,6 @@
 import type { IsoDate } from "activity/iso-date";
-import { MUSCLE_GROUPS } from "workout/catalog-entry";
-import type { ExerciseProgress } from "workout/progress";
+import type { ExerciseProgress } from "workout/application/progress";
+import { MUSCLE_GROUPS } from "workout/domain/catalog-entry";
 import { formatCount, formatRelativeDay, formatTopSet, pluralize } from "../format.ts";
 
 const PERCENT = 100;

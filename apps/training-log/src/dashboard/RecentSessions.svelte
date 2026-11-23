@@ -4,7 +4,7 @@
   import ListRow from "design-system/ListRow";
   import Section from "design-system/Section";
   import Text from "design-system/Text";
-  import type { Workout } from "workout/session";
+  import type { Workout } from "workout/application/workout";
   import { formatShortDate } from "../format.ts";
   import { SERIES_OF_ACTIVITY } from "../series.ts";
   import { interceptLink } from "./open-note.ts";

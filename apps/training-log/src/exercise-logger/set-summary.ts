@@ -1,4 +1,5 @@
-import { type ExerciseSet, formatClock } from "workout/exercise-set";
+import { formatClock } from "workout/adapter/set-format";
+import type { ExerciseSet } from "workout/domain/exercise-set";
 import { pluralize } from "../format.ts";
 
 const bestOfKind = (sets: readonly ExerciseSet[], last: ExerciseSet): string => {

@@ -6,7 +6,7 @@
   import Chip from "design-system/Chip";
   import SearchField from "design-system/SearchField";
   import Text from "design-system/Text";
-  import { type SearchEntry, searchCatalog } from "workout/search";
+  import { type SearchEntry, searchCatalog } from "workout/application/search";
   import { canCreateExercise, exerciseToAdd } from "./add-exercise.ts";
   import type { ExerciseLoggerState } from "./exercise-logger-state.svelte.ts";
 

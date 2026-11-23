@@ -1,9 +1,4 @@
-export type ExerciseSet =
-  | { kind: "weight"; reps: number; kilograms: number }
-  | { kind: "body"; reps: number }
-  | { kind: "time"; seconds: number };
-
-export type SetKind = ExerciseSet["kind"];
+import type { ExerciseSet } from "../domain/exercise-set.ts";
 
 const SECONDS_PER_MINUTE = 60;
 const WEIGHT_SET = /^- *(\d+) *reps? *[xX×]? *(\d+(?:\.\d+)?) *kg/i;

@@ -3,19 +3,14 @@
   import Text from "design-system/Text";
   import Theme from "design-system/Theme";
   import { type App, Notice, type TFile } from "obsidian";
-  import type { ExerciseSet } from "workout/exercise-set";
-  import { lastPerformance } from "workout/progress";
-  import { mergeCatalog } from "workout/search";
-  import {
-    appendExercise,
-    appendSet,
-    deleteSet,
-    findExercise,
-    parseSession,
-    recentExerciseNames,
-    type Workout,
-  } from "workout/session";
-  import { loadWorkoutsNewestFirst, noteDate } from "../notes.ts";
+  import { parseSession } from "workout/adapter/markdown-session";
+  import { lastPerformance } from "workout/application/progress";
+  import { mergeCatalog } from "workout/application/search";
+  import { recentExerciseNames, type Workout } from "workout/application/workout";
+  import { BUILT_IN_CATALOG } from "workout/data/built-in-catalog";
+  import type { ExerciseSet } from "workout/domain/exercise-set";
+  import { findExercise } from "workout/domain/session";
+  import { loadWorkoutsNewestFirst, noteDate, workoutNote } from "../notes.ts";
   import type { TrainingLogSettings } from "../settings.svelte.ts";
   import AddExercise from "./AddExercise.svelte";
   import ExerciseCard from "./ExerciseCard.svelte";
@@ -61,16 +56,16 @@
 
   const session = $derived(parseSession(noteText ?? ""));
   const takenNames = $derived(session.exercises.map(exercise => exercise.name));
-  const catalog = $derived(mergeCatalog(recentExerciseNames(history?.pastWorkouts ?? [])));
+  const catalog = $derived(mergeCatalog(BUILT_IN_CATALOG, recentExerciseNames(history?.pastWorkouts ?? [])));
   const active = $derived(findExercise(session, ui.activeExercise ?? "") ?? session.exercises.at(-1));
   const previous = $derived(active && history && lastPerformance(history.pastWorkouts, active.name, history.sessionDate));
 
-  const editNote = (change: (text: string) => string) =>
-    app.vault.process(file, change).catch((error: Error) => new Notice(`Exercise logger: ${error.message}`));
+  const log = $derived(workoutNote(app, file));
+  const showError = (error: Error) => new Notice(`Exercise logger: ${error.message}`);
 
   const addExercise = (exerciseName: string) => {
     ui.exerciseAdded(exerciseName);
-    void editNote(text => appendExercise(text, exerciseName));
+    void log.addExercise(exerciseName).catch(showError);
   };
 </script>
 
@@ -85,8 +80,8 @@
           {ui}
           isActive={exercise === active}
           previous={exercise === active ? previous : undefined}
-          onLogSet={(set: ExerciseSet) => editNote(text => appendSet(text, exercise.name, set))}
-          onDeleteSet={(setIndex: number) => editNote(text => deleteSet(text, exercise.name, setIndex))}
+          onLogSet={(set: ExerciseSet) => void log.addSet(exercise.name, set).catch(showError)}
+          onDeleteSet={(setIndex: number) => void log.deleteSet(exercise.name, setIndex).catch(showError)}
         />
       {/each}
       <AddExercise {ui} {catalog} {takenNames} onAdd={addExercise} />

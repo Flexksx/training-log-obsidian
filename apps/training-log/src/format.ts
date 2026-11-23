@@ -1,5 +1,6 @@
 import { daysBetween, fromIsoDate, type IsoDate } from "activity/iso-date";
-import { type ExerciseSet, formatClock } from "workout/exercise-set";
+import { formatClock } from "workout/adapter/set-format";
+import type { ExerciseSet } from "workout/domain/exercise-set";
 
 const LOCALE = "en-GB";
 const DAYS_SHOWN_AS_RELATIVE = 7;

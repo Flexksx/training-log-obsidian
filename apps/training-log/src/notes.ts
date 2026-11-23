@@ -2,7 +2,9 @@ import { activityOfNoteType, GYM } from "activity/activities";
 import { type IsoDate, isIsoDate } from "activity/iso-date";
 import { parseDuration, parseKilocalories, type Visit } from "activity/visit";
 import { type App, type FrontMatterCache, normalizePath, TFile, TFolder, Vault } from "obsidian";
-import { parseSession, type Workout } from "workout/session";
+import { appendExercise, appendSet, deleteSet, parseSession } from "workout/adapter/markdown-session";
+import type { Workout } from "workout/application/workout";
+import type { WorkoutLogPort } from "workout/application/workout-log-port";
 
 const ISO_DATE_LENGTH = 10;
 const MARKDOWN_EXTENSION = "md";
@@ -92,3 +94,15 @@ export const createWorkoutNote = (app: App, activityFolder: string, date: IsoDat
     normalizePath(`${activityFolder}/${date} ${WORKOUT_NOTE_TITLE}.${MARKDOWN_EXTENSION}`),
     workoutNoteText(date),
   );
+
+export const workoutNote = (app: App, file: TFile): WorkoutLogPort => ({
+  addExercise: async exerciseName => {
+    await app.vault.process(file, text => appendExercise(text, exerciseName));
+  },
+  addSet: async (exerciseName, set) => {
+    await app.vault.process(file, text => appendSet(text, exerciseName, set));
+  },
+  deleteSet: async (exerciseName, setIndex) => {
+    await app.vault.process(file, text => deleteSet(text, exerciseName, setIndex));
+  },
+});

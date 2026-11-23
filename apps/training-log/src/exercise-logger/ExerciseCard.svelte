@@ -8,8 +8,9 @@
   import Stepper from "design-system/Stepper";
   import Text from "design-system/Text";
   import { Notice } from "obsidian";
-  import { type ExerciseSet, formatSet, formatShortSet } from "workout/exercise-set";
-  import type { Exercise } from "workout/session";
+  import { formatSet, formatShortSet } from "workout/adapter/set-format";
+  import type { ExerciseSet } from "workout/domain/exercise-set";
+  import type { Exercise } from "workout/domain/session";
   import { formatDayMonth } from "../format.ts";
   import {
     type DraftField,
@@ -69,7 +70,7 @@
 
       {#if exercise.sets.length}
         <div>
-          {#each exercise.sets as set, index (set.line)}
+          {#each exercise.sets as set, index (index)}
             <ListRow variant="compact">
               <div class="set">
                 <span class="number"><Text variant="faint">{index + 1}</Text></span>

@@ -1,6 +1,5 @@
-import { BUILT_IN_CATALOG } from "./built-in-catalog.ts";
-import { exerciseKey, muscleGroupOf } from "./catalog.ts";
-import type { CatalogEntry } from "./catalog-entry.ts";
+import { type ExerciseCatalog, exerciseKey, muscleGroupOf } from "../domain/catalog.ts";
+import type { CatalogEntry } from "../domain/catalog-entry.ts";
 
 export type SearchEntry = CatalogEntry & { recentRank?: number };
 
@@ -14,13 +13,13 @@ const MIN_SCORE_PER_LETTER = 2;
 const LENGTH_PENALTY = 0.01;
 const WORD_SEPARATORS = " -(";
 
-export const mergeCatalog = (recentNames: readonly string[]): SearchEntry[] => {
-  const byKey = new Map<string, SearchEntry>(BUILT_IN_CATALOG.map(entry => [exerciseKey(entry.name), entry]));
+export const mergeCatalog = (catalog: ExerciseCatalog, recentNames: readonly string[]): SearchEntry[] => {
+  const byKey = new Map<string, SearchEntry>(catalog.entries.map(entry => [exerciseKey(entry.name), entry]));
   recentNames.forEach((name, recentRank) => {
     const key = exerciseKey(name);
     const known = byKey.get(key);
     if (known?.recentRank !== undefined) return;
-    byKey.set(key, { group: muscleGroupOf(name), ...known, name, recentRank });
+    byKey.set(key, { group: muscleGroupOf(catalog, name), ...known, name, recentRank });
   });
   return [...byKey.values()];
 };

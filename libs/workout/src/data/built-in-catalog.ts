@@ -1,6 +1,7 @@
-import type { CatalogEntry } from "./catalog-entry.ts";
+import type { ExerciseCatalog } from "../domain/catalog.ts";
+import type { CatalogEntry, MuscleGroup } from "../domain/catalog-entry.ts";
 
-export const BUILT_IN_CATALOG: readonly CatalogEntry[] = [
+const BUILT_IN_ENTRIES: readonly CatalogEntry[] = [
   { name: "Barbell Bench Press", group: "Chest" },
   { name: "Incline Barbell Bench Press", group: "Chest" },
   { name: "Dumbbell Bench Press", group: "Chest" },
@@ -91,3 +92,18 @@ export const BUILT_IN_CATALOG: readonly CatalogEntry[] = [
   { name: "Farmer's Carry", group: "Full body" },
   { name: "Thruster", group: "Full body" },
 ];
+
+const GROUP_RULES_IN_PRIORITY_ORDER: readonly (readonly [MuscleGroup, RegExp])[] = [
+  ["Mobility", /\b(stretch(es|ing)?|mobility|foam roll(ing)?|yoga)\b/i],
+  ["Core", /\b(abs?|abdominal|crunch|plank|knee raise|leg raise|hanging)\b/i],
+  ["Arms", /\b(curls?|biceps?|triceps?|skull)\b/i],
+  ["Shoulders", /\b(delts?|shoulder|overhead|lateral raise|shrug)\b/i],
+  ["Chest", /\b(bench|chest|fly|pec|push-?ups?|dips?)\b/i],
+  ["Back", /\b(rows?|pulldown|pull-?ups?|chin-?ups?|lat|deadlift)\b/i],
+  ["Legs", /\b(squats?|leg|lunges?|calf|glute|hip|step-?up)\b/i],
+];
+
+export const BUILT_IN_CATALOG: ExerciseCatalog = {
+  entries: BUILT_IN_ENTRIES,
+  groupRules: GROUP_RULES_IN_PRIORITY_ORDER,
+};

@@ -1,5 +1,7 @@
-import { catalogEntryOf } from "workout/catalog";
-import { type ExerciseSet, joinMinutes, type SetKind, splitMinutes } from "workout/exercise-set";
+import { joinMinutes, splitMinutes } from "workout/adapter/set-format";
+import { BUILT_IN_CATALOG } from "workout/data/built-in-catalog";
+import { catalogEntryOf } from "workout/domain/catalog";
+import type { ExerciseSet, SetKind } from "workout/domain/exercise-set";
 
 export type Draft = {
   kind: SetKind;
@@ -48,7 +50,7 @@ const draftFieldsOf = (set: ExerciseSet): Partial<Draft> => {
 
 export const seedDraft = (exerciseName: string, lastSetToday?: ExerciseSet, firstSetLastTime?: ExerciseSet): Draft => {
   const seed = lastSetToday ?? firstSetLastTime;
-  const kind = catalogEntryOf(exerciseName)?.kind;
+  const kind = catalogEntryOf(BUILT_IN_CATALOG, exerciseName)?.kind;
   return { ...DEFAULT_DRAFT, ...(kind && { kind }), ...(seed && draftFieldsOf(seed)) };
 };
 

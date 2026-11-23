@@ -1,7 +1,7 @@
 import { activityLabel, GYM } from "activity/activities";
 import type { Visit } from "activity/visit";
-import { workoutTotals } from "workout/progress";
-import type { Workout } from "workout/session";
+import { workoutTotals } from "workout/application/progress";
+import type { Workout } from "workout/application/workout";
 import { formatCount, formatHours, pluralize } from "../format.ts";
 
 const RECENT_SESSION_COUNT = 6;

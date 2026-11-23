@@ -25,7 +25,6 @@ const baseRules = base.forbidden.map(rule => {
   return rule;
 });
 
-/** @type {import('dependency-cruiser').IConfiguration} */
 module.exports = {
   ...base,
   forbidden: [
@@ -49,6 +48,18 @@ module.exports = {
       severity: 'error',
       from: { path: '^libs/' },
       to: { path: '^apps/' },
+    },
+    {
+      name: 'workout-domain-does-not-import-outer-layers',
+      severity: 'error',
+      from: { path: '^libs/workout/src/domain/' },
+      to: { path: '^libs/workout/src/(application|adapter|data)/' },
+    },
+    {
+      name: 'workout-application-does-not-import-adapters-or-data',
+      severity: 'error',
+      from: { path: '^libs/workout/src/application/' },
+      to: { path: '^libs/workout/src/(adapter|data)/' },
     },
     {
       name: 'libs-do-not-import-obsidian',

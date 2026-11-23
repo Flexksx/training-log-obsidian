@@ -1,4 +1,4 @@
-import { isKnownName, resolveName, type SearchEntry } from "workout/search";
+import { isKnownName, resolveName, type SearchEntry } from "workout/application/search";
 
 export const canCreateExercise = (
   catalog: readonly SearchEntry[],
