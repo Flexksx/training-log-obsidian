@@ -1,7 +1,7 @@
 const base = require('./config/dependency-cruiser.base.cjs');
 
-const APP_SOURCE = '^apps/workout-tracker/src/';
-const VAULT_ADAPTERS = '^apps/workout-tracker/src/(main|notes|dashboard/load-dashboard)\\.ts$';
+const APP_SOURCE = '^apps/training-log/src/';
+const VAULT_ADAPTERS = '^apps/training-log/src/(main|notes|dashboard/load-dashboard)\\.ts$';
 const OBSIDIAN = '(^|node_modules/)obsidian(/|$)';
 const SVELTE = 'node_modules/svelte/';
 const CONFIG_FILES = '\\.config\\.(js|mjs|cjs)$';
@@ -20,7 +20,7 @@ const baseRules = base.forbidden.map(rule => {
     return { ...rule, to: { ...rule.to, pathNot: SVELTE } };
   }
   if (rule.name === 'no-orphans') {
-    return { ...rule, from: { ...rule.from, pathNot: [...rule.from.pathNot, '^apps/workout-tracker/src/main\\.ts$', CONFIG_FILES] } };
+    return { ...rule, from: { ...rule.from, pathNot: [...rule.from.pathNot, '^apps/training-log/src/main\\.ts$', CONFIG_FILES] } };
   }
   return rule;
 });
@@ -75,7 +75,7 @@ module.exports = {
       name: 'view-logic-does-not-import-components',
       comment: 'Plain .ts modules hold view logic. They never depend on a component.',
       severity: 'error',
-      from: { path: APP_SOURCE, pathNot: [COMPONENT_OR_STATE, '^apps/workout-tracker/src/main\\.ts$'] },
+      from: { path: APP_SOURCE, pathNot: [COMPONENT_OR_STATE, '^apps/training-log/src/main\\.ts$'] },
       to: { path: COMPONENTS },
     },
   ],

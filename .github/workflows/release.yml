@@ -34,8 +34,8 @@ jobs:
         if: env.SKIP != 'true'
         run: >-
           gh release create "$VERSION" --target "$GITHUB_SHA" --title "$VERSION" --generate-notes
-          apps/workout-tracker/dist/main.js
-          apps/workout-tracker/dist/manifest.json
-          apps/workout-tracker/dist/styles.css
+          apps/training-log/dist/main.js
+          apps/training-log/dist/manifest.json
+          apps/training-log/dist/styles.css
         env:
           GH_TOKEN: ${{ github.token }}

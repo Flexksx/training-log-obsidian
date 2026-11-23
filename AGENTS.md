@@ -5,7 +5,7 @@
 An Obsidian plugin for physical activity. The vault notes are the source of
 truth. The plugin reads them and writes sets back into them.
 
-- `apps/workout-tracker`: the Obsidian plugin. The `workout-logger` code block
+- `apps/training-log`: the Obsidian plugin. The `workout-logger` code block
   goes inside a workout note and logs sets. A ribbon icon opens the dashboard
   in its own tab. It shows consistency, time and calories, sets per muscle and
   exercise progress. The settings tab sets the activity folder, the only place
@@ -50,11 +50,11 @@ Every developer action uses `just`. `just` sends the work to `moon`.
 - `just lint`
 - `just build all`
 - `just test all`
-- `just start workout-tracker` rebuilds on every change.
+- `just start training-log` rebuilds on every change.
 - `just publish` builds the plugin into your vault.
 
 The plugin build writes `main.js`, `manifest.json` and `styles.css` to
-`apps/workout-tracker/dist`. `just publish` writes them to
+`apps/training-log/dist`. `just publish` writes them to
 `$OBSIDIAN_VAULT/.obsidian/plugins/<id>` instead, with the id from the root
 `manifest.json`, and fails if `OBSIDIAN_VAULT` is unset. It skips the build
 cache, so it rewrites the files even after Obsidian replaced them with a
