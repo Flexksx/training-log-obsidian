@@ -1,7 +1,7 @@
 {
   "id": "training-log",
   "name": "Training Log",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "minAppVersion": "1.7.2",
   "description": "Log gym sets inside a note and see consistency and progress on a dashboard.",
   "author": "Flexksx",
