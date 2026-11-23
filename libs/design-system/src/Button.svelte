@@ -22,6 +22,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
   }
   button:focus-visible {
     outline: 2px solid var(--ds-border-focus);
@@ -80,5 +81,25 @@
   .icon:hover {
     background: var(--ds-surface-hover);
     color: var(--ds-text-muted);
+  }
+  @media (hover: none) and (pointer: coarse) {
+    button {
+      transition: transform 120ms ease, background-color 120ms ease;
+    }
+    button:active {
+      transform: scale(0.96);
+    }
+    .icon {
+      min-width: 44px;
+      min-height: 44px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    button {
+      transition: none;
+    }
+    button:active {
+      transform: none;
+    }
   }
 </style>

@@ -26,4 +26,9 @@
   .selected {
     border-color: var(--ds-accent);
   }
+  @media (hover: none) and (pointer: coarse) and (prefers-reduced-motion: no-preference) {
+    .card {
+      transition: border-color 180ms ease;
+    }
+  }
 </style>

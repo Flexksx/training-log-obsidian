@@ -106,6 +106,17 @@
 </Card>
 
 <style>
+  @media (hover: none) and (pointer: coarse) and (prefers-reduced-motion: no-preference) {
+    .set {
+      animation: set-appear 180ms ease-out both;
+    }
+    @keyframes set-appear {
+      from {
+        opacity: 0;
+        transform: translateY(4px);
+      }
+    }
+  }
   .set {
     display: flex;
     align-items: center;

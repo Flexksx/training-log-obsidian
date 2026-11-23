@@ -63,10 +63,8 @@
   const log = $derived(workoutNote(app, file));
   const showError = (error: Error) => new Notice(`Exercise logger: ${error.message}`);
 
-  const addExercise = (exerciseName: string) => {
-    ui.exerciseAdded(exerciseName);
-    void log.addExercise(exerciseName).catch(showError);
-  };
+  const addExercise = (exerciseName: string) =>
+    void log.addExercise(exerciseName).then(() => ui.exerciseAdded(exerciseName), showError);
 </script>
 
 <Theme>

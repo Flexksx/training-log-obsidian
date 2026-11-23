@@ -45,6 +45,7 @@
     box-shadow: var(--ds-control-shadow);
     font-size: var(--ds-font-small);
     cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
   }
   button:hover {
     background: var(--ds-control-hover);
@@ -56,5 +57,22 @@
   button.selected {
     background: var(--ds-accent);
     color: var(--ds-text-on-accent);
+  }
+  @media (hover: none) and (pointer: coarse) {
+    button {
+      min-height: 44px;
+      transition: transform 120ms ease, background-color 120ms ease;
+    }
+    button:active {
+      transform: scale(0.96);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    button {
+      transition: none;
+    }
+    button:active {
+      transform: none;
+    }
   }
 </style>
