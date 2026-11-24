@@ -1,14 +1,12 @@
 import {
-  AbstractInputSuggest,
-  type App,
   ItemView,
   type MarkdownPostProcessorContext,
   MarkdownRenderChild,
   Plugin,
   PluginSettingTab,
   Setting,
+  type SettingDefinitionItem,
   TFile,
-  TFolder,
   type WorkspaceLeaf,
 } from "obsidian";
 import { type Component, mount, unmount } from "svelte";
@@ -23,6 +21,8 @@ const DASHBOARD_VIEW_TYPE = "training-log-dashboard";
 const DASHBOARD_TITLE = "Training dashboard";
 const DASHBOARD_ICON = "dumbbell";
 const OPEN_DASHBOARD_LABEL = "Open training dashboard";
+const ACTIVITY_FOLDER_DESCRIPTION =
+  "The folder with your activity notes, subfolders included. Leave it empty to read the whole vault.";
 
 const mountView = <Props extends Record<string, unknown>>(
   view: Component<Props>,
@@ -66,35 +66,6 @@ class DashboardView extends ItemView {
   }
 }
 
-class FolderSuggest extends AbstractInputSuggest<TFolder> {
-  readonly #folders: () => TFolder[];
-  readonly #onChoose: (folderPath: string) => void;
-
-  constructor(app: App, input: HTMLInputElement, onChoose: (folderPath: string) => void) {
-    super(app, input);
-    this.#folders = () =>
-      app.vault.getAllLoadedFiles().filter((file): file is TFolder => file instanceof TFolder && !file.isRoot());
-    this.#onChoose = onChoose;
-  }
-
-  protected override getSuggestions(query: string): TFolder[] {
-    const needle = query.toLowerCase();
-    return this.#folders()
-      .filter(folder => folder.path.toLowerCase().includes(needle))
-      .sort((a, b) => a.path.localeCompare(b.path));
-  }
-
-  override renderSuggestion(folder: TFolder, element: HTMLElement): void {
-    element.setText(folder.path);
-  }
-
-  override selectSuggestion(folder: TFolder): void {
-    this.setValue(folder.path);
-    this.#onChoose(folder.path);
-    this.close();
-  }
-}
-
 class TrainingLogSettingTab extends PluginSettingTab {
   readonly #settings: TrainingLogSettings;
   readonly #save: (data: SettingsData) => Promise<void>;
@@ -107,16 +78,27 @@ class TrainingLogSettingTab extends PluginSettingTab {
 
   override display(): void {
     this.containerEl.empty();
-    new Setting(this.containerEl)
-      .setName("Activity folder")
-      .setDesc("The folder with your activity notes, subfolders included. Leave it empty to read the whole vault.")
-      .addText(text => {
-        text
-          .setPlaceholder("Whole vault")
-          .setValue(this.#settings.activityFolder)
-          .onChange(folderPath => this.#setActivityFolder(folderPath));
-        new FolderSuggest(this.app, text.inputEl, folderPath => this.#setActivityFolder(folderPath));
-      });
+    const setting = new Setting(this.containerEl).setName("Activity folder").setDesc(ACTIVITY_FOLDER_DESCRIPTION);
+    this.#renderActivityFolder(setting);
+  }
+
+  override getSettingDefinitions(): SettingDefinitionItem[] {
+    return [
+      {
+        name: "Activity folder",
+        desc: ACTIVITY_FOLDER_DESCRIPTION,
+        render: setting => this.#renderActivityFolder(setting),
+      },
+    ];
+  }
+
+  #renderActivityFolder(setting: Setting): void {
+    setting.addText(text =>
+      text
+        .setPlaceholder("Whole vault")
+        .setValue(this.#settings.activityFolder)
+        .onChange(folderPath => this.#setActivityFolder(folderPath)),
+    );
   }
 
   #setActivityFolder(folderPath: string): void {

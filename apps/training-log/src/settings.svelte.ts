@@ -5,8 +5,10 @@ const WHOLE_VAULT = "";
 export class TrainingLogSettings {
   activityFolder = $state(WHOLE_VAULT);
 
-  constructor(saved: Partial<SettingsData> | null) {
-    this.activityFolder = saved?.activityFolder ?? WHOLE_VAULT;
+  constructor(saved: unknown) {
+    if (!saved || typeof saved !== "object") return;
+    if ("activityFolder" in saved && typeof saved.activityFolder === "string")
+      this.activityFolder = saved.activityFolder;
   }
 
   toData(): SettingsData {

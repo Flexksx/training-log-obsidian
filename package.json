@@ -2,6 +2,9 @@
   "name": "training-log-obsidian",
   "private": true,
   "type": "module",
+  "scripts": {
+    "build": "nix develop --command just build all"
+  },
   "devDependencies": {
     "@biomejs/biome": "catalog:",
     "dependency-cruiser": "^18.7.0",

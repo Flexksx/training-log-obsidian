@@ -12,6 +12,8 @@ on:
 
 permissions:
   contents: write
+  id-token: write
+  attestations: write
 
 concurrency:
   group: release
@@ -55,6 +57,13 @@ jobs:
         run: nix develop --command just test all
       - if: env.SKIP != 'true'
         run: nix develop --command just build all
+      - name: Attest release assets
+        if: env.SKIP != 'true'
+        uses: actions/attest@v4
+        with:
+          subject-path: |
+            apps/training-log/dist/main.js
+            apps/training-log/dist/styles.css
       - name: Push the version
         if: env.SKIP != 'true'
         run: git push origin HEAD:main
