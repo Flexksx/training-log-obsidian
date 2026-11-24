@@ -13,6 +13,7 @@
   import type { Exercise } from "workout/domain/session";
   import { formatDayMonth } from "../format.ts";
   import {
+    type Draft,
     type DraftField,
     KIND_FIELDS,
     KIND_OPTIONS,
@@ -21,7 +22,6 @@
     setFromDraft,
     withField,
   } from "./draft.ts";
-  import type { ExerciseLoggerState } from "./exercise-logger-state.svelte.ts";
   import { summarizeSets } from "./set-summary.ts";
 
   type PreviousSets = { date: string; sets: ExerciseSet[] };
@@ -30,22 +30,26 @@
     exercise,
     isActive,
     previous,
-    ui,
+    savedDraft,
+    onSaveDraft,
+    onSelect,
     onLogSet,
     onDeleteSet,
   }: {
     exercise: Exercise;
     isActive: boolean;
     previous?: PreviousSets;
-    ui: ExerciseLoggerState;
+    savedDraft?: Readonly<Draft>;
+    onSaveDraft: (draft: Readonly<Draft>) => void;
+    onSelect: () => void;
     onLogSet: (set: ExerciseSet) => void;
     onDeleteSet: (setIndex: number) => void;
   } = $props();
 
-  const draft = $derived(ui.draftOf(exercise.name) ?? seedDraft(exercise.name, exercise.sets.at(-1), previous?.sets[0]));
+  const draft = $derived(savedDraft ?? seedDraft(exercise.name, exercise.sets.at(-1), previous?.sets[0]));
   const fields = $derived(KIND_FIELDS[draft.kind]);
 
-  const setField = (field: DraftField, value: number | null) => ui.saveDraft(exercise.name, withField(draft, field, value));
+  const setField = (field: DraftField, value: number | null) => onSaveDraft(withField(draft, field, value));
 
   const logSet = () => {
     const set = setFromDraft(draft);
@@ -85,7 +89,7 @@
       <SegmentedControl
         options={KIND_OPTIONS}
         selected={draft.kind}
-        onselect={kind => ui.saveDraft(exercise.name, { ...draft, kind })}
+        onselect={kind => onSaveDraft({ ...draft, kind })}
       />
 
       <div class="entry" class:single={fields.length === 1}>
@@ -98,7 +102,7 @@
       </div>
     </CardBody>
   {:else}
-    <CardHeader onclick={() => ui.select(exercise.name)}>
+    <CardHeader onclick={onSelect}>
       <Text variant="title">{exercise.name}</Text>
       <Text variant="meta">{summarizeSets(exercise.sets)}</Text>
     </CardHeader>

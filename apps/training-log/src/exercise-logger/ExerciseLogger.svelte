@@ -57,14 +57,14 @@
   const session = $derived(parseSession(noteText ?? ""));
   const takenNames = $derived(session.exercises.map(exercise => exercise.name));
   const catalog = $derived(mergeCatalog(BUILT_IN_CATALOG, recentExerciseNames(history?.pastWorkouts ?? [])));
-  const active = $derived(findExercise(session, ui.activeExercise ?? "") ?? session.exercises.at(-1));
+  const active = $derived(findExercise(session, ui.value.activeExercise ?? "") ?? session.exercises.at(-1));
   const previous = $derived(active && history && lastPerformance(history.pastWorkouts, active.name, history.sessionDate));
 
   const log = $derived(workoutNote(app, file));
   const showError = (error: Error) => new Notice(`Exercise logger: ${error.message}`);
 
   const addExercise = (exerciseName: string) =>
-    void log.addExercise(exerciseName).then(() => ui.exerciseAdded(exerciseName), showError);
+    void log.addExercise(exerciseName).then(() => ui.dispatch({ type: "exerciseAdded", name: exerciseName }), showError);
 </script>
 
 <Theme>
@@ -75,14 +75,25 @@
       {#each session.exercises as exercise, index (index)}
         <ExerciseCard
           {exercise}
-          {ui}
+          savedDraft={ui.value.drafts[exercise.name]}
+          onSaveDraft={draft => ui.dispatch({ type: "saveDraft", name: exercise.name, draft })}
+          onSelect={() => ui.dispatch({ type: "select", name: exercise.name })}
           isActive={exercise === active}
           previous={exercise === active ? previous : undefined}
           onLogSet={(set: ExerciseSet) => void log.addSet(exercise.name, set).catch(showError)}
           onDeleteSet={(setIndex: number) => void log.deleteSet(exercise.name, setIndex).catch(showError)}
         />
       {/each}
-      <AddExercise {ui} {catalog} {takenNames} onAdd={addExercise} />
+      <AddExercise
+        {catalog}
+        {takenNames}
+        isAdding={ui.value.isAdding}
+        query={ui.value.query}
+        onQueryChange={query => ui.dispatch({ type: "changeQuery", query })}
+        onOpen={() => ui.dispatch({ type: "openAdd" })}
+        onClose={() => ui.dispatch({ type: "closeAdd" })}
+        onAdd={addExercise}
+      />
     </div>
   {/if}
 </Theme>

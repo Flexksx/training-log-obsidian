@@ -8,23 +8,30 @@
   import Text from "design-system/Text";
   import { type SearchEntry, searchCatalog } from "workout/application/search";
   import { canCreateExercise, exerciseToAdd } from "./add-exercise.ts";
-  import type { ExerciseLoggerState } from "./exercise-logger-state.svelte.ts";
 
   let {
-    ui,
+    isAdding,
+    query,
+    onQueryChange,
+    onOpen,
+    onClose,
     catalog,
     takenNames,
     onAdd,
   }: {
-    ui: ExerciseLoggerState;
+    isAdding: boolean;
+    query: string;
+    onQueryChange: (query: string) => void;
+    onOpen: () => void;
+    onClose: () => void;
     catalog: readonly SearchEntry[];
     takenNames: readonly string[];
     onAdd: (exerciseName: string) => void;
   } = $props();
 
   const hasExercises = $derived(takenNames.length > 0);
-  const results = $derived(searchCatalog(catalog, ui.query, takenNames));
-  const typed = $derived(ui.query.trim());
+  const results = $derived(searchCatalog(catalog, query, takenNames));
+  const typed = $derived(query.trim());
   const canCreate = $derived(canCreateExercise(catalog, takenNames, typed));
 
   const addTopResult = (event: KeyboardEvent) => {
@@ -33,23 +40,23 @@
   };
 </script>
 
-{#if hasExercises && !ui.isAdding}
+{#if hasExercises && !isAdding}
   <div class="add">
-    <Button variant="dashed" onclick={() => ui.openAdd()}>+ Add exercise</Button>
+    <Button variant="dashed" onclick={onOpen}>+ Add exercise</Button>
   </div>
 {:else}
   <Card variant="selected">
     <CardHeader>
       <Text variant="title">{hasExercises ? "Add exercise" : "Start with your first exercise"}</Text>
       {#if hasExercises}
-        <Button variant="link" onclick={() => ui.closeAdd()}>Cancel</Button>
+        <Button variant="link" onclick={onClose}>Cancel</Button>
       {/if}
     </CardHeader>
     <CardBody>
       <SearchField
-        bind:value={ui.query}
+        bind:value={() => query, onQueryChange}
         placeholder="Search, for example &quot;bp&quot; or &quot;inc db&quot;"
-        focusOnMount={ui.isAdding}
+        focusOnMount={isAdding}
         onkeydown={addTopResult}
       />
       <div class="chips">
